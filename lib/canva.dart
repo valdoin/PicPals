@@ -3,6 +3,11 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:picpals/eraser_icon_icons.dart';
 import 'package:picpals/home_page.dart';
+import 'dart:ui' as ui;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'dart:typed_data';
+import 'package:flutter/rendering.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -58,6 +63,7 @@ class DrawingBoardState extends State<DrawingBoard> {
   Color strokeColor = Colors.black;
   Color pickerColor = Colors.black;
   double strokeWidth = 3.0;
+  final repaintKey = GlobalKey();
 
   void startDrawing(DragStartDetails details) {
     setState(() {
@@ -98,8 +104,21 @@ class DrawingBoardState extends State<DrawingBoard> {
     setState(() => pickerColor = color);
   }
 
+  Future<void> exportImageToServer(GlobalKey key) async {
+    RenderRepaintBoundary boundary =
+        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List pngBytes = byteData!.buffer.asUint8List();
+    http.post(Uri.parse('http://10.42.150.17:5000/createPost'),
+        body: {'image': base64Encode(pngBytes)});
+
+    //envoyer l'image avec createPost du crud post
+  }
+
   @override
   Widget build(BuildContext context) {
+    var boardSize = MediaQuery.of(context).size.width * 0.95;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -127,6 +146,8 @@ class DrawingBoardState extends State<DrawingBoard> {
                   actions: [
                     TextButton(
                       onPressed: () {
+                        print("c bon");
+                        exportImageToServer(repaintKey);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -150,7 +171,10 @@ class DrawingBoardState extends State<DrawingBoard> {
                 ),
               );
             },
-            icon: const Icon(Icons.send),
+            icon: const Icon(
+              Icons.send,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -171,11 +195,12 @@ class DrawingBoardState extends State<DrawingBoard> {
           const SizedBox(height: 20.0),
           //toile de dessin user
           SizedBox(
-            height: 475,
-            width: 475,
+            height: boardSize * 1.3,
+            width: boardSize * 1.3,
             //ClipRect permet de garder le dessin au sein de la toile, pas de débordement possible
             child: ClipRect(
               child: Container(
+                key: repaintKey,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
                   color: Colors.white,
@@ -185,10 +210,12 @@ class DrawingBoardState extends State<DrawingBoard> {
                   onPanStart: startDrawing,
                   onPanUpdate: updateDrawing,
                   onPanEnd: endDrawing,
-                  child: CustomPaint(
-                    size: const Size(475, 475),
-                    painter: MyPainter(
-                      points: points,
+                  child: RepaintBoundary(
+                    child: CustomPaint(
+                      size: const Size(475, 475),
+                      painter: MyPainter(
+                        points: points,
+                      ),
                     ),
                   ),
                 ),

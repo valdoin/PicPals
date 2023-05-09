@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:picpals/canva.dart';
 
 import 'profile.dart';
 
@@ -47,6 +48,7 @@ class HomePageState extends State<HomePage> {
   static final List<Widget> _pages = <Widget>[
     const ProfilePage(),
     const MainPage(),
+    const DrawingBoard(),
   ];
 
   @override
@@ -94,7 +96,9 @@ class HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'home',
-          )
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.draw_outlined), label: 'dessingue'),
         ],
         onTap: _onItemTapped,
         currentIndex: _selectedIndex,
