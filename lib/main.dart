@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl_phone_field/phone_number.dart';
-import 'package:picpals/profile.dart';
 import 'package:picpals/requests/AccountRequest.dart';
 import 'package:picpals/requests/responseHandler/AccountResponseHandler.dart';
-import 'package:picpals/user_info/manage_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'canva.dart';
 import 'register.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'home_page.dart' as home;
@@ -298,6 +294,7 @@ class _LoginScreenState extends State<LoginScreen> {
 //sert a renvoyer sur la page selon qu'on soit log ou non
 Future<String> choosePage() async {
   final prefs = await SharedPreferences.getInstance();
+  print(prefs.getString("cookie"));
 
   if (prefs.getString('password') != null) {
     final loginResponse = await AccountRequest.login(

@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AccountRequest {
+class FriendRequests {
   static const String url = "http://10.42.174.246:5000/api/auth/";
 
   static Future<http.Response> login(String phone, String password) async {
     http.Response res = await http.post(Uri.parse('${url}login'),
         headers: {'Content-type': 'application/json'},
         body: jsonEncode({"phone": phone, "password": password}));
-    print(res.headers["set-cookie"]);
     return res;
   }
 
@@ -25,6 +25,16 @@ class AccountRequest {
         headers: {'Content-type': 'application/json'},
         body: jsonEncode({'id': id}));
 
+    return res;
+  }
+
+  static Future <http.Response> getFriendList() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cookie = prefs.getString('cookie')!;
+    http.Response res = await http.get(Uri.parse('${url}getFriendList'),
+      headers: {'Content-type': 'application/json', 'cookie': cookie },
+      );
+    print(cookie);
     return res;
   }
 }
