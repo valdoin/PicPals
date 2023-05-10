@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:picpals/canva.dart';
+import 'package:picpals/friendpage.dart';
 
 import 'profile.dart';
 
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
   State<HomePage> createState() => HomePageState();
 }
 
@@ -49,6 +51,7 @@ class HomePageState extends State<HomePage> {
     const ProfilePage(),
     const MainPage(),
     const DrawingBoard(),
+    const FriendPage(),
   ];
 
   @override
@@ -99,6 +102,7 @@ class HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.draw_outlined), label: 'dessingue'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'amis'),
         ],
         onTap: _onItemTapped,
         currentIndex: _selectedIndex,

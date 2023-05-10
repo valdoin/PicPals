@@ -1,8 +1,5 @@
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:picpals/requests/AccountRequest.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserInfo {
@@ -21,8 +18,6 @@ class UserInfo {
     await prefs.setString('phone', phone ?? '');
     await prefs.setString('name', name ?? '');
     await prefs.setString('password', clearPassword ?? '');
-    print('couillasse aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-    print(prefs.getString('cookie'));
   }
 
   static void updateDirectInfo() async {

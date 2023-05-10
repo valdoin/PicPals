@@ -119,7 +119,6 @@ class DrawingBoardState extends State<DrawingBoard> {
   @override
   Widget build(BuildContext context) {
     ScreenshotController screenshotController = ScreenshotController();
-    GlobalKey<State<StatefulWidget>> keylol = repaintKey;
     var boardSize = MediaQuery.of(context).size.width * 0.95;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -148,10 +147,7 @@ class DrawingBoardState extends State<DrawingBoard> {
                   actions: [
                     TextButton(
                       onPressed: () {
-                        screenshotController.capture().then((image) {
-                          print(image);
-                        });
-                        print("c bon");
+                        screenshotController.capture().then((image) {});
 
                         Navigator.push(
                             context,

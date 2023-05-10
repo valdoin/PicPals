@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:picpals/main.dart';
 import 'package:picpals/user_info/manage_preferences.dart';
 

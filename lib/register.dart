@@ -4,8 +4,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'requests/AccountRequest.dart';
 import 'requests/responseHandler/AccountResponseHandler.dart';
 
