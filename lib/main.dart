@@ -298,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
 //sert a renvoyer sur la page selon qu'on soit log ou non
 Future<String> choosePage() async {
   final prefs = await SharedPreferences.getInstance();
-
+  prefs.getString('cookie');
   if (prefs.getString('password') != null) {
     final loginResponse = await AccountRequest.login(
         prefs.getString('phone')!, prefs.getString('password')!);

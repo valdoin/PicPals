@@ -21,6 +21,8 @@ class UserInfo {
     await prefs.setString('phone', phone ?? '');
     await prefs.setString('name', name ?? '');
     await prefs.setString('password', clearPassword ?? '');
+    print('couillasse aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    print(prefs.getString('cookie'));
   }
 
   static void updateDirectInfo() async {

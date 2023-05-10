@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
+import 'package:screenshot/screenshot.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -64,7 +65,6 @@ class DrawingBoardState extends State<DrawingBoard> {
   Color pickerColor = Colors.black;
   double strokeWidth = 3.0;
   final repaintKey = GlobalKey();
-
   void startDrawing(DragStartDetails details) {
     setState(() {
       addPoint(details.globalPosition);
@@ -118,6 +118,8 @@ class DrawingBoardState extends State<DrawingBoard> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenshotController screenshotController = ScreenshotController();
+    GlobalKey<State<StatefulWidget>> keylol = repaintKey;
     var boardSize = MediaQuery.of(context).size.width * 0.95;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -146,8 +148,11 @@ class DrawingBoardState extends State<DrawingBoard> {
                   actions: [
                     TextButton(
                       onPressed: () {
+                        screenshotController.capture().then((image) {
+                          print(image);
+                        });
                         print("c bon");
-                        exportImageToServer(repaintKey);
+
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -210,7 +215,8 @@ class DrawingBoardState extends State<DrawingBoard> {
                   onPanStart: startDrawing,
                   onPanUpdate: updateDrawing,
                   onPanEnd: endDrawing,
-                  child: RepaintBoundary(
+                  child: Screenshot(
+                    controller: screenshotController,
                     child: CustomPaint(
                       size: const Size(475, 475),
                       painter: MyPainter(
@@ -415,3 +421,23 @@ class DrawingBoardState extends State<DrawingBoard> {
     );
   }
 }
+
+/*
+class tempPage extends StatefulWidget{
+  const tempPage({super.key});
+
+  var image = keylol.currentState.rendered;
+  
+
+  @override
+  State<tempPage> createState() => tempPageState();
+}
+
+class tempPageState extends State<tempPage>{
+  
+  @override
+  Widget build(BuildContext context){
+    
+    return Image.memory(bytes)
+  }
+}*/

@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'server_ip.dart';
 
 class AccountRequest {
-  static const String url = "http://10.42.150.17:5000/api/auth/";
+  static const String url = 'http://${serverIp}:5000/api/auth/';
 
   static Future<http.Response> login(String phone, String password) async {
     http.Response res = await http.post(Uri.parse('${url}login'),
