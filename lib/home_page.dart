@@ -57,24 +57,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Drawer(
-        child: Text("kikous"),
-      ),
       appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(
-                Icons.account_circle,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-            );
-          },
-        ),
         backgroundColor: Theme.of(context).primaryColor,
         title: Center(
           child: Text(
@@ -89,22 +72,35 @@ class HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Theme.of(context).primaryColor,
+        selectedItemColor: Colors.white,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(
               Icons.account_circle,
             ),
-            label: 'profile',
+            label: 'Profil',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'home',
+            label: 'Accueil',
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.draw_outlined), label: 'dessingue'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'amis'),
+              icon: Icon(Icons.draw), label: 'Dessiner'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Amis'),
         ],
-        onTap: _onItemTapped,
+        onTap: (index) {
+          if (index == 2) {
+            //ici rajouter condition pour voir si l'user a déjà dessiné et lui afficher erreur dans un toast le cas échéant, sinon le rediriger
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DrawingBoard()),
+            );
+          } else {
+            _onItemTapped(index);
+          }
+        },
         currentIndex: _selectedIndex,
       ),
       /*

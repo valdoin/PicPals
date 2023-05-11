@@ -157,6 +157,7 @@ class _RegisterFormState extends State<RegisterForm> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: TextField(
+            cursorColor: Theme.of(context).primaryColor,
             controller: nameController,
             inputFormatters: [
               LengthLimitingTextInputFormatter(20),
@@ -202,6 +203,8 @@ class _RegisterFormState extends State<RegisterForm> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: TextField(
+            obscureText: true,
+            cursorColor: Theme.of(context).primaryColor,
             controller: passwordController,
             style: const TextStyle(color: Colors.white),
             keyboardType: TextInputType.text,

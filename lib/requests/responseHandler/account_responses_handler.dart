@@ -11,9 +11,8 @@ class AccountResponseHandler {
     if (res.statusCode == 400) {
       Fluttertoast.showToast(msg: 'this phone number is already used');
     } else if (res.statusCode == 201) {
-      SharedPreferences.getInstance().then((prefs) {
-        UserInfo.updateInfo(res, prefs, phone, clearPassword);
-      });
+      SharedPreferences.getInstance().then(
+          (prefs) => {UserInfo.updateInfo(res, prefs, phone, clearPassword)});
       Navigator.push(
         context,
         MaterialPageRoute(

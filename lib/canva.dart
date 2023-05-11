@@ -7,9 +7,11 @@ import 'package:picpals/home_page.dart';
 import 'dart:ui' as ui;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'dart:typed_data';
-import 'package:flutter/rendering.dart';
-import 'package:share_files_and_screenshot_widgets/share_files_and_screenshot_widgets.dart';
+import 'package:widgets_to_image/widgets_to_image.dart';
+import 'dart:io';
+import 'package:image/image.dart' as img;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -65,7 +67,6 @@ class DrawingBoardState extends State<DrawingBoard> {
   Color strokeColor = Colors.black;
   Color pickerColor = Colors.black;
   double strokeWidth = 3.0;
-  final repaintKey = GlobalKey();
   void startDrawing(DragStartDetails details) {
     setState(() {
       addPoint(details.globalPosition);
@@ -105,12 +106,28 @@ class DrawingBoardState extends State<DrawingBoard> {
     setState(() => pickerColor = color);
   }
 
+  Future<void> sendImageToServer(List<int> imageData) async {
+    final url = Uri.parse('http://127.0.0.1:5000/upload-image');
+    final request = http.MultipartRequest('POST', url);
+    final file = http.MultipartFile.fromBytes(
+      'image',
+      imageData,
+      filename: 'image.png',
+      contentType: MediaType('image', 'png'),
+    );
+    request.files.add(file);
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      print("L'image a été envoyée avec succès.");
+    } else {
+      print("Erreur lors de l'envoi de l'image.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Image? image = null;
-    GlobalKey previewContainer = new GlobalKey();
+    WidgetsToImageController controller = WidgetsToImageController();
     var boardSize = MediaQuery.of(context).size.width * 0.95;
-    int size = 500;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -130,17 +147,21 @@ class DrawingBoardState extends State<DrawingBoard> {
           //bouton dans l'appbar qui permet d'envoyer le dessin une fois celui-ci fini
           IconButton(
             tooltip: 'Envoyer le dessin',
-            onPressed: () {
+            onPressed: () async {
+              final bytes = await controller.capture();
+              // ignore: use_build_context_synchronously
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
                   title: const Center(child: Text("Envoyer le dessin ?")),
+                  content: SizedBox(
+                    height: boardSize * 0.7,
+                    width: boardSize * 0.7,
+                    child: Image.memory(bytes!),
+                  ),
                   actions: [
                     TextButton(
-                      onPressed: () {
-                          ShareFilesAndScreenshotWidgets().shareScreenshot(
-                            previewContainer, size, "title", "name.png", "image/png");
-                          },
+                      onPressed: () {},
                       child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4.0),
                         child: Center(child: Text('Envoyer')),
@@ -187,30 +208,29 @@ class DrawingBoardState extends State<DrawingBoard> {
             width: boardSize * 1.3,
             //ClipRect permet de garder le dessin au sein de la toile, pas de débordement possible
             child: ClipRect(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    color: Colors.white,
-                  ),
-                  //detecte touch input user et fait appel aux fonctions de dessin crées précedemment
-                  child: GestureDetector(
-                    onPanStart: startDrawing,
-                    onPanUpdate: updateDrawing,
-                    onPanEnd: endDrawing,
-                    child: RepaintBoundary(
-                      key: previewContainer,
-                      child: CustomPaint(
-                        size: const Size(475, 475),
-                        painter: MyPainter(
-                          points: points,
-                        ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5.0),
+                  color: Colors.white,
+                ),
+                //detecte touch input user et fait appel aux fonctions de dessin crées précedemment
+                child: GestureDetector(
+                  onPanStart: startDrawing,
+                  onPanUpdate: updateDrawing,
+                  onPanEnd: endDrawing,
+                  child: WidgetsToImage(
+                    controller: controller,
+                    child: CustomPaint(
+                      size: const Size(475, 475),
+                      painter: MyPainter(
+                        points: points,
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-
+          ),
 
           Expanded(
             child: Padding(
@@ -405,23 +425,3 @@ class DrawingBoardState extends State<DrawingBoard> {
     );
   }
 }
-
-/*
-class tempPage extends StatefulWidget{
-  const tempPage({super.key});
-
-  var image = keylol.currentState.rendered;
-  
-
-  @override
-  State<tempPage> createState() => tempPageState();
-}
-
-class tempPageState extends State<tempPage>{
-  
-  @override
-  Widget build(BuildContext context){
-    
-    return Image.memory(bytes)
-  }
-}*/

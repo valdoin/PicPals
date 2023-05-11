@@ -38,7 +38,9 @@ dependencies:
   http: any
   fluttertoast: ^8.2.1
   shared_preferences: any
-  share_files_and_screenshot_widgets: ^1.0.6
+  widgets_to_image: any
+  image: ^4.0.17
+  http_parser: any
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
