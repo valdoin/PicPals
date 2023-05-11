@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:picpals/requests/FriendRequests.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'requests/friends_requests.dart';
 
 class FriendPage extends StatefulWidget {
   const FriendPage({super.key});
@@ -26,16 +27,16 @@ class FriendPageState extends State<FriendPage> {
           List<Widget> children;
           if (snapshot.hasData) {
             if (snapshot.data == 'error') {
-              //menu principal
+              //erreur !
               Fluttertoast.showToast(msg: 'Error !');
               return const Text("erreur");
             } else {
-              //menu auth
-              Fluttertoast.showToast(msg: 'Could not connect');
+              //le menu des amis
+              Fluttertoast.showToast(msg: 'Friends loaded');
               return ListView.builder(
                 itemCount: 1,
                 itemBuilder: (context, index) {
-                  return Text(snapshot.data['friends'][index].toString());
+                  return FriendElement(friend: snapshot.data['friends'][index]);
                 },
               );
             }
@@ -78,6 +79,55 @@ Future<dynamic> choosePage() async {
   if (res.statusCode == 200) {
     return jsonDecode(res.body);
   } else {
+    //print(res);
+    SharedPreferences.getInstance().then((prefs) {
+      //print(prefs.getString('cookie'));
+    });
     return "error";
+  }
+}
+
+class FriendElement extends StatefulWidget {
+  const FriendElement({super.key, this.friend});
+
+  final friend;
+
+  @override
+  State<FriendElement> createState() => _FriendElementState();
+}
+
+class _FriendElementState extends State<FriendElement> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50,
+      width: 50,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+          color: Colors.white),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 10,
+          ),
+          const CircleAvatar(
+            backgroundColor: Colors.grey,
+            child: Text('A'),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Text(
+            '${widget.friend['name']}',
+            style: GoogleFonts.getFont(
+              'Varela Round',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -7,9 +7,11 @@ class AccountRequest {
   static const String url = 'http://$serverIp:5000/api/auth/';
 
   static Future<http.Response> login(String phone, String password) async {
-    http.Response res = await http.post(Uri.parse('${url}login'),
-        headers: {'Content-type': 'application/json'},
-        body: jsonEncode({"phone": phone, "password": password}));
+    http.Response res = await http
+        .post(Uri.parse('${url}login'),
+            headers: {'Content-type': 'application/json'},
+            body: jsonEncode({"phone": phone, "password": password}))
+        .timeout(const Duration(seconds: 20));
     return res;
   }
 

@@ -4,8 +4,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'requests/AccountRequest.dart';
-import 'requests/responseHandler/AccountResponseHandler.dart';
+import 'requests/account_requests.dart';
+import 'requests/responseHandler/account_responses_handler.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

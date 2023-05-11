@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:picpals/requests/AccountRequest.dart';
-import 'package:picpals/requests/responseHandler/AccountResponseHandler.dart';
+import 'requests/account_requests.dart';
+import 'package:picpals/requests/responseHandler/account_responses_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'register.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'home_page.dart' as home;
+import 'user_info/manage_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -299,6 +300,11 @@ Future<String> choosePage() async {
     final loginResponse = await AccountRequest.login(
         prefs.getString('phone')!, prefs.getString('password')!);
     if (loginResponse.statusCode == 201) {
+      SharedPreferences.getInstance().then((prefs) {
+        UserInfo.updateInfo(loginResponse, prefs, prefs.getString('phone')!,
+            prefs.getString('password')!);
+      });
+
       return 'Connected';
     } else if (loginResponse.statusCode == 400) {
       return 'Wrong credentials';
