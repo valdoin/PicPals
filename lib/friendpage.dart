@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:picpals/requests/FriendRequests.dart';
+import 'package:picpals/requests/friends_requests.dart';
 
 class FriendPage extends StatefulWidget {
   const FriendPage({super.key});

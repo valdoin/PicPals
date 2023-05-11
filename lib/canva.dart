@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,7 +9,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
-import 'package:screenshot/screenshot.dart';
+import 'package:share_files_and_screenshot_widgets/share_files_and_screenshot_widgets.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -104,22 +105,12 @@ class DrawingBoardState extends State<DrawingBoard> {
     setState(() => pickerColor = color);
   }
 
-  Future<void> exportImageToServer(GlobalKey key) async {
-    RenderRepaintBoundary boundary =
-        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    Uint8List pngBytes = byteData!.buffer.asUint8List();
-    http.post(Uri.parse('http://10.42.150.17:5000/createPost'),
-        body: {'image': base64Encode(pngBytes)});
-
-    //envoyer l'image avec createPost du crud post
-  }
-
   @override
   Widget build(BuildContext context) {
-    ScreenshotController screenshotController = ScreenshotController();
+    Image? image = null;
+    GlobalKey previewContainer = new GlobalKey();
     var boardSize = MediaQuery.of(context).size.width * 0.95;
+    int size = 500;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -147,13 +138,9 @@ class DrawingBoardState extends State<DrawingBoard> {
                   actions: [
                     TextButton(
                       onPressed: () {
-                        screenshotController.capture().then((image) {});
-
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()));
-                      },
+                          ShareFilesAndScreenshotWidgets().shareScreenshot(
+                            previewContainer, size, "title", "name.png", "image/png");
+                          },
                       child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4.0),
                         child: Center(child: Text('Envoyer')),
@@ -200,30 +187,31 @@ class DrawingBoardState extends State<DrawingBoard> {
             width: boardSize * 1.3,
             //ClipRect permet de garder le dessin au sein de la toile, pas de débordement possible
             child: ClipRect(
-              child: Container(
-                key: repaintKey,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.0),
-                  color: Colors.white,
-                ),
-                //detecte touch input user et fait appel aux fonctions de dessin crées précedemment
-                child: GestureDetector(
-                  onPanStart: startDrawing,
-                  onPanUpdate: updateDrawing,
-                  onPanEnd: endDrawing,
-                  child: Screenshot(
-                    controller: screenshotController,
-                    child: CustomPaint(
-                      size: const Size(475, 475),
-                      painter: MyPainter(
-                        points: points,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    color: Colors.white,
+                  ),
+                  //detecte touch input user et fait appel aux fonctions de dessin crées précedemment
+                  child: GestureDetector(
+                    onPanStart: startDrawing,
+                    onPanUpdate: updateDrawing,
+                    onPanEnd: endDrawing,
+                    child: RepaintBoundary(
+                      key: previewContainer,
+                      child: CustomPaint(
+                        size: const Size(475, 475),
+                        painter: MyPainter(
+                          points: points,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
+
+
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 75.0),
