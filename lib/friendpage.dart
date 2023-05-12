@@ -34,7 +34,7 @@ class FriendPageState extends State<FriendPage> {
               //le menu des amis
               Fluttertoast.showToast(msg: 'Friends loaded');
               return ListView.builder(
-                itemCount: 1,
+                itemCount: snapshot.data['friends'].length,
                 itemBuilder: (context, index) {
                   return FriendElement(friend: snapshot.data['friends'][index]);
                 },

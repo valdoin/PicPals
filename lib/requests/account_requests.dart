@@ -11,7 +11,7 @@ class AccountRequest {
         .post(Uri.parse('${url}login'),
             headers: {'Content-type': 'application/json'},
             body: jsonEncode({"phone": phone, "password": password}))
-        .timeout(const Duration(seconds: 20));
+        .timeout(const Duration(seconds: 15));
     return res;
   }
 
@@ -27,7 +27,7 @@ class AccountRequest {
     final prefs = await SharedPreferences.getInstance();
     final cookie = prefs.getString('cookie') ?? '';
 
-    http.Response res = await http.post(Uri.parse('$url/api/auth/deleteUser'),
+    http.Response res = await http.post(Uri.parse('${url}deleteUser'),
         headers: {'Content-type': 'application/json', 'cookie': cookie},
         body: jsonEncode({'id': id}));
 

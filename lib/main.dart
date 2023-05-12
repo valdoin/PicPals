@@ -259,6 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
               return const HomePage(title: 'Flutter Demo Home Page');
             }
           } else if (snapshot.hasError) {
+            print(snapshot.data);
             Fluttertoast.showToast(msg: 'Error');
             return const HomePage(title: 'Flutter Demo Home Page');
           } else {
