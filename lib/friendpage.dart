@@ -33,11 +33,36 @@ class FriendPageState extends State<FriendPage> {
             } else {
               //le menu des amis
               Fluttertoast.showToast(msg: 'Friends loaded');
-              return ListView.builder(
-                itemCount: snapshot.data['friends'].length,
-                itemBuilder: (context, index) {
-                  return FriendElement(friend: snapshot.data['friends'][index]);
-                },
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: Text(
+                      'Vos amis',
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ListView.builder(
+                    itemCount: snapshot.data['friends'].length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: FriendElement(
+                            friend: snapshot.data['friends'][index]),
+                      );
+                    },
+                  ),
+                ],
               );
             }
           } else if (snapshot.hasError) {
@@ -101,30 +126,51 @@ class _FriendElementState extends State<FriendElement> {
   Widget build(BuildContext context) {
     return Container(
       height: 50,
-      width: 50,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(30)),
-          color: Colors.white),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(30)),
+        color: Colors.white,
+      ),
       child: Row(
         children: [
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
-          const CircleAvatar(
+          CircleAvatar(
             backgroundColor: Colors.grey,
-            child: Text('A'),
+            child: Text('${widget.friend["name"][0]}'.toUpperCase()),
           ),
-          SizedBox(
+          const SizedBox(
             width: 20,
           ),
-          Text(
-            '${widget.friend['name']}',
-            style: GoogleFonts.getFont(
-              'Varela Round',
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+          Expanded(
+            child: Text(
+              '${widget.friend['name']}',
+              style: GoogleFonts.getFont(
+                'Varela Round',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
+          ),
+          PopupMenuButton<String>(
+            onSelected: (String result) {
+              if (result == 'View Profile') {
+                // fonction pour voir le profil de l'ami
+              } else if (result == 'Remove Friend') {
+                FriendRequests.deleteFriend(widget.friend["phone"].toString());
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'View Profile',
+                child: Text('Voir le profil'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Remove Friend',
+                child: Text("Supprimer l'ami"),
+              ),
+            ],
           ),
         ],
       ),

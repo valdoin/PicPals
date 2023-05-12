@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,9 +7,11 @@ import 'package:picpals/home_page.dart';
 import 'dart:ui' as ui;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'dart:typed_data';
-import 'package:flutter/rendering.dart';
-import 'package:screenshot/screenshot.dart';
+import 'package:widgets_to_image/widgets_to_image.dart';
+import 'dart:io';
+import 'package:image/image.dart' as img;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -64,7 +67,6 @@ class DrawingBoardState extends State<DrawingBoard> {
   Color strokeColor = Colors.black;
   Color pickerColor = Colors.black;
   double strokeWidth = 3.0;
-  final repaintKey = GlobalKey();
   void startDrawing(DragStartDetails details) {
     setState(() {
       addPoint(details.globalPosition);
@@ -104,21 +106,27 @@ class DrawingBoardState extends State<DrawingBoard> {
     setState(() => pickerColor = color);
   }
 
-  Future<void> exportImageToServer(GlobalKey key) async {
-    RenderRepaintBoundary boundary =
-        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    Uint8List pngBytes = byteData!.buffer.asUint8List();
-    http.post(Uri.parse('http://10.42.150.17:5000/createPost'),
-        body: {'image': base64Encode(pngBytes)});
-
-    //envoyer l'image avec createPost du crud post
+  Future<void> sendImageToServer(List<int> imageData) async {
+    final url = Uri.parse('http://127.0.0.1:5000/upload-image');
+    final request = http.MultipartRequest('POST', url);
+    final file = http.MultipartFile.fromBytes(
+      'image',
+      imageData,
+      filename: 'image.png',
+      contentType: MediaType('image', 'png'),
+    );
+    request.files.add(file);
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      print("L'image a été envoyée avec succès.");
+    } else {
+      print("Erreur lors de l'envoi de l'image.");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    ScreenshotController screenshotController = ScreenshotController();
+    WidgetsToImageController controller = WidgetsToImageController();
     var boardSize = MediaQuery.of(context).size.width * 0.95;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -139,21 +147,21 @@ class DrawingBoardState extends State<DrawingBoard> {
           //bouton dans l'appbar qui permet d'envoyer le dessin une fois celui-ci fini
           IconButton(
             tooltip: 'Envoyer le dessin',
-            onPressed: () {
+            onPressed: () async {
+              final bytes = await controller.capture();
+              // ignore: use_build_context_synchronously
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
                   title: const Center(child: Text("Envoyer le dessin ?")),
+                  content: SizedBox(
+                    height: boardSize * 0.7,
+                    width: boardSize * 0.7,
+                    child: Image.memory(bytes!),
+                  ),
                   actions: [
                     TextButton(
-                      onPressed: () {
-                        screenshotController.capture().then((image) {});
-
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()));
-                      },
+                      onPressed: () {},
                       child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4.0),
                         child: Center(child: Text('Envoyer')),
@@ -201,7 +209,6 @@ class DrawingBoardState extends State<DrawingBoard> {
             //ClipRect permet de garder le dessin au sein de la toile, pas de débordement possible
             child: ClipRect(
               child: Container(
-                key: repaintKey,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
                   color: Colors.white,
@@ -211,8 +218,8 @@ class DrawingBoardState extends State<DrawingBoard> {
                   onPanStart: startDrawing,
                   onPanUpdate: updateDrawing,
                   onPanEnd: endDrawing,
-                  child: Screenshot(
-                    controller: screenshotController,
+                  child: WidgetsToImage(
+                    controller: controller,
                     child: CustomPaint(
                       size: const Size(475, 475),
                       painter: MyPainter(
@@ -224,6 +231,7 @@ class DrawingBoardState extends State<DrawingBoard> {
               ),
             ),
           ),
+
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 75.0),
@@ -417,23 +425,3 @@ class DrawingBoardState extends State<DrawingBoard> {
     );
   }
 }
-
-/*
-class tempPage extends StatefulWidget{
-  const tempPage({super.key});
-
-  var image = keylol.currentState.rendered;
-  
-
-  @override
-  State<tempPage> createState() => tempPageState();
-}
-
-class tempPageState extends State<tempPage>{
-  
-  @override
-  Widget build(BuildContext context){
-    
-    return Image.memory(bytes)
-  }
-}*/
