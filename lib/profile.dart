@@ -20,16 +20,16 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: CircleAvatar(
                 radius: 50,
-                child: Text(
-                  UserInfo.name ?? "D",
-                  style: const TextStyle(
-                    fontSize: 35,
-                  )),
+                child: Text(UserInfo.name[0] ?? "D",
+                    style: const TextStyle(
+                      fontSize: 35,
+                    )),
               ),
             ),
             Text(
               UserInfo.name ?? "default",
-              style: const TextStyle(color: Colors.white),),
+              style: const TextStyle(color: Colors.white),
+            ),
             ElevatedButton(
               onPressed: () {
                 UserInfo.resetInfo();

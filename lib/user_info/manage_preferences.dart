@@ -16,8 +16,11 @@ class UserInfo {
     await prefs.setString('cookie', res.headers['set-cookie'] ?? '');
     await prefs.setString('id', jsonBody['id'] ?? '');
     await prefs.setString('phone', phone ?? '');
-    await prefs.setString('name', name ?? '');
+    await prefs.setString('name', jsonBody['name'] ?? '');
     await prefs.setString('password', clearPassword ?? '');
+
+    updateDirectInfo();
+    //TODO faire en sorte que la reponse coté serv renvoie le nom dans le body
   }
 
   static void updateDirectInfo() async {

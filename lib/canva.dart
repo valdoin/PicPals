@@ -12,6 +12,7 @@ import 'dart:typed_data';
 import 'package:widgets_to_image/widgets_to_image.dart';
 import 'dart:io';
 import 'package:image/image.dart' as img;
+import 'requests/post_requests.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -161,7 +162,9 @@ class DrawingBoardState extends State<DrawingBoard> {
                   ),
                   actions: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        PostRequests.create(bytes);
+                      },
                       child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4.0),
                         child: Center(child: Text('Envoyer')),
