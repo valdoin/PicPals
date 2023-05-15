@@ -149,6 +149,11 @@ class DrawingBoardState extends State<DrawingBoard> {
                     TextButton(
                       onPressed: () {
                         PostRequests.create(bytes);
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return const HomePage();
+                          },
+                        ));
                       },
                       child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4.0),
