@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:picpals/canva.dart';
 import 'package:picpals/friendpage.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:picpals/requests/post_requests.dart';
 import 'profile.dart';
 
 class MyApp extends StatelessWidget {
@@ -151,13 +154,56 @@ class HomePageState extends State<HomePage> {
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  const MainPage({super.key, this.posts});
+
+  final posts;
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
+  Future<http.Response> _friendsPostsRes = PostRequests.getFriendsPosts();
+
+  @override
+  Widget build(context) {
+    return FutureBuilder<http.Response>(
+      future: _friendsPostsRes,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data!.statusCode != 200) {
+            return const Text("error");
+          }
+
+          var res = jsonDecode(snapshot.data!.body)["posts"];
+
+          return ListView.builder(
+            itemCount: res.length,
+            itemBuilder: (context, index) {
+              print(res.toString());
+              return PostElement(post: res[index]);
+            },
+          );
+        } else if (snapshot.hasError) {
+          return const Text('error');
+        } else {
+          return const Text('loading...');
+        }
+      },
+    );
+  }
+}
+
+class PostElement extends StatefulWidget {
+  const PostElement({super.key, this.post});
+
+  final post;
+
+  @override
+  State<PostElement> createState() => _PostElementState();
+}
+
+class _PostElementState extends State<PostElement> {
   @override
   Widget build(context) {
     var postSize = MediaQuery.of(context).size.width * 0.95;
@@ -180,7 +226,7 @@ class _MainPageState extends State<MainPage> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "John Smith",
+                  widget.post["author"]["name"].toString(),
                   style: GoogleFonts.getFont(
                     'Varela Round',
                     fontSize: 18,
@@ -198,8 +244,8 @@ class _MainPageState extends State<MainPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15.0),
               ),
-              child: Image.asset(
-                'img/squre_test_img.png',
+              child: Image.network(
+                widget.post["url"].toString(),
                 fit: BoxFit.fill,
               )),
           SizedBox(
