@@ -8,6 +8,7 @@ import 'dart:ui' as ui;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:picpals/requests/phrase_requests.dart';
 import 'dart:typed_data';
 import 'package:widgets_to_image/widgets_to_image.dart';
 import 'dart:io';
@@ -107,23 +108,7 @@ class DrawingBoardState extends State<DrawingBoard> {
     setState(() => pickerColor = color);
   }
 
-  Future<void> sendImageToServer(List<int> imageData) async {
-    final url = Uri.parse('http://127.0.0.1:5000/upload-image');
-    final request = http.MultipartRequest('POST', url);
-    final file = http.MultipartFile.fromBytes(
-      'image',
-      imageData,
-      filename: 'image.png',
-      contentType: MediaType('image', 'png'),
-    );
-    request.files.add(file);
-    final response = await request.send();
-    if (response.statusCode == 200) {
-      print("L'image a été envoyée avec succès.");
-    } else {
-      print("Erreur lors de l'envoi de l'image.");
-    }
-  }
+  Future<http.Response> resPhrase = PhraseRequests.getPhrase();
 
   @override
   Widget build(BuildContext context) {
@@ -192,19 +177,46 @@ class DrawingBoardState extends State<DrawingBoard> {
       ),
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 18.0),
+          Padding(
+            padding: EdgeInsets.only(top: 15.0),
             //ici texte d'exemple, sera remplacé par notre phrase aléatoire générée chaque jour
-            child: Text(
-              'Lorem ipsum dolor sit amet',
-              style: TextStyle(
-                fontSize: 15,
-                fontStyle: FontStyle.italic,
-                color: Colors.white,
-              ),
+            child: FutureBuilder(
+              future: resPhrase,
+              builder: ((context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(
+                    jsonDecode(snapshot.data!.body)["phrase"]["phrase"]
+                        .toString(),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.white,
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return const Text(
+                    'erreur',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.white,
+                    ),
+                  );
+                } else {
+                  return const Text(
+                    'Loading...',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.white,
+                    ),
+                  );
+                }
+              }),
             ),
           ),
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 10.0),
           //toile de dessin user
           SizedBox(
             height: boardSize * 1.3,

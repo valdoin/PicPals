@@ -86,8 +86,7 @@ class HomePageState extends State<HomePage> {
             icon: Icon(Icons.home),
             label: 'Accueil',
           ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.draw), label: 'Dessiner'),
+          BottomNavigationBarItem(icon: Icon(Icons.draw), label: 'Dessiner'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Amis'),
         ],
         onTap: (index) {
@@ -226,6 +225,8 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
+
+//TODO faire une class post qui affihce un post unique avec en parametre un post puis on met ca dans un future builder que l'on met dans une list view 
 
 /*
 idee : couleur atitré chaque jour/ personne et un post = la bordure de couleur + le fond du post noir + la feuille du canvas de couleur */
