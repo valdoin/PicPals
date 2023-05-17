@@ -4,14 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:picpals/friend_page.dart';
 import 'package:picpals/main.dart';
+import 'package:picpals/requests/friends_requests.dart';
 import 'package:picpals/requests/post_requests.dart';
 import 'package:picpals/user_info/manage_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:picpals/requests/account_requests.dart';
+import 'package:picpals/main_appbar.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final String phone;
+  final String name;
+  const ProfilePage({super.key, required this.phone, required this.name});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -20,31 +25,16 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-      child: Center(
+    return Scaffold(
+      appBar: const MainAppBar(),
+      body: Center(
         child: Column(
           children: [
-            const Expanded(child: MainPage()),
+            Expanded(child: MainPage(phone: widget.phone, name: widget.name)),
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      UserInfo.resetInfo();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomePage(
-                                    title: 'Picpals',
-                                  )));
-                    },
-                    child: const Text('Déconnexion'),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
                   ElevatedButton(
                     onPressed: () {
                       showDialog(
@@ -53,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           return AlertDialog(
                             title: const Text("Confirmation"),
                             content: const Text(
-                                "Êtes-vous sûr de vouloir supprimer votre compte ?"),
+                                "Êtes-vous sûr de vouloir supprimer cet ami ?"),
                             actions: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -66,16 +56,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      AccountRequest.delete(UserInfo.id);
+                                      FriendRequests.deleteFriend(widget.phone);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const HomePage(
-                                                    title: 'Picpals',
+                                                  const FriendPage(
                                                   )));
                                       Fluttertoast.showToast(
-                                        msg: "Account deleted",
+                                        msg: "Friend deleted",
                                         toastLength: Toast.LENGTH_SHORT,
                                         gravity: ToastGravity.BOTTOM,
                                         backgroundColor: Colors.grey[700],
@@ -96,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         },
                       );
                     },
-                    child: const Text("Supprimer le compte"),
+                    child: const Text("Supprimer l'ami"),
                   ),
                 ],
               ),
@@ -109,7 +98,9 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key, this.posts});
+  late String phone;
+  late String name;
+  MainPage({super.key, required this.phone, required this.name, this.posts});
 
   final posts;
   @override
@@ -117,13 +108,11 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final Future<http.Response> _userPostsRes =
-      PostRequests.getUserPosts(UserInfo.phone.toString());
-
   @override
   Widget build(BuildContext context) {
     var postSize = MediaQuery.of(context).size.width * 0.95;
-
+    final Future<http.Response> _userPostsRes =
+        PostRequests.getUserPosts(widget.phone);
     return FutureBuilder<http.Response>(
       future: _userPostsRes,
       builder: (context, snapshot) {
@@ -134,47 +123,45 @@ class _MainPageState extends State<MainPage> {
 
           var res = jsonDecode(snapshot.data!.body)["posts"];
 
-return ListView.builder(
-  itemCount: res.length + 1, 
-  itemBuilder: (context, index) {
-    if (index == 0) {
-      //affichage de l'en-tête avec avatar et pseudo
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-        child: SizedBox(
-          height: postSize * 0.15,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 35,
-                child: Text(
-                  UserInfo.name[0] ?? "D",
-                  style: const TextStyle(
-                    fontSize: 35,
+          return ListView.builder(
+            itemCount: res.length + 1,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                //affichage de l'en-tête avec avatar et pseudo
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  child: SizedBox(
+                    height: postSize * 0.15,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 35,
+                          child: Text(
+                            widget.name[0],
+                            style: const TextStyle(
+                              fontSize: 35,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                          child: Text(
+                            widget.name,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                child: Text(
-                  UserInfo.name ?? "default",
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    
-    //affichage des posts
-    var post = res[index - 1];
-    return PostElement(post: post);
-  },
-);
+                );
+              }
 
-
+              //affichage des posts
+              var post = res[index - 1];
+              return PostElement(post: post);
+            },
+          );
         } else if (snapshot.hasError) {
           return const Text(
             'error',
@@ -188,11 +175,8 @@ return ListView.builder(
   }
 }
 
-
-
 class PostElement extends StatefulWidget {
   const PostElement({super.key, this.post});
-
   final post;
 
   @override

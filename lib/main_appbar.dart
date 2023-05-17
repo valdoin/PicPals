@@ -32,6 +32,7 @@ class _MainAppBarState extends State<MainAppBar> {
   Widget build(BuildContext context) {
     print(UserInfo.primaryColor);
     return AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: HexColor(userPrimaryColor),
       title: Center(
         child: Text(

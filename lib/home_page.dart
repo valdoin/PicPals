@@ -212,7 +212,7 @@ class _PostElementState extends State<PostElement> {
     var postSize = MediaQuery.of(context).size.width * 0.95;
     return Container(
       margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.025,
-          postSize * 0.1, MediaQuery.of(context).size.width * 0.025, 0),
+          postSize * 0.1, MediaQuery.of(context).size.width * 0.025, 6),
       width: postSize,
       height: postSize * 1.22,
       decoration: BoxDecoration(
@@ -222,21 +222,38 @@ class _PostElementState extends State<PostElement> {
       child: Column(
         children: [
           SizedBox(
-            //USER
             height: postSize * 0.15,
             child: Container(
               margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  widget.post["author"]["name"].toString(),
-                  style: GoogleFonts.getFont(
-                    'Varela Round',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.post["author"]["name"].toString(),
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                    child: Text(
+                      widget.post["date"]
+                          .toString()
+                          .substring(0, 10)
+                          .replaceAll("-", "/"),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -258,10 +275,11 @@ class _PostElementState extends State<PostElement> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Dites ce que vous en pensez...",
+                  "Qu'en pensez-vous ?",
                   style: GoogleFonts.getFont(
                     'Varela Round',
                     fontSize: 18,
+                    fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.w500,
                     color: Colors.white,
                   ),

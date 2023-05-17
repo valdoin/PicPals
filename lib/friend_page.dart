@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:picpals/friend_search_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'requests/friends_requests.dart';
+import 'package:picpals/friend_profile.dart';
 
 class FriendPage extends StatefulWidget {
   const FriendPage({super.key});
@@ -33,14 +34,17 @@ class FriendPageState extends State<FriendPage> {
               return const Text("erreur");
             } else {
               if (snapshot.data['friends'].length == 0) {
-                return Center(
-                  child: Text(
-                    "Vous n'avez aucun amis :( \nAjoutez-en !",
-                    style: GoogleFonts.getFont(
-                      'Varela Round',
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  child: Center(
+                    child: Text(
+                      "Vous n'avez aucun ami :( \nAjoutez-en !",
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 );
@@ -50,7 +54,7 @@ class FriendPageState extends State<FriendPage> {
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    padding: const EdgeInsets.fromLTRB(0, 20, 10, 0),
                     child: Text(
                       'Vos amis',
                       style: GoogleFonts.getFont(
@@ -166,7 +170,12 @@ class _FriendElementState extends State<FriendElement> {
           PopupMenuButton<String>(
             onSelected: (String result) {
               if (result == 'View Profile') {
-                // fonction pour voir le profil de l'ami
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfilePage(
+                              phone: widget.friend["phone"].toString(), name: widget.friend["name"].toString(),
+                            )));
               } else if (result == 'Remove Friend') {
                 FriendRequests.deleteFriend(widget.friend["phone"].toString());
               }

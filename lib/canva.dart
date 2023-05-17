@@ -117,6 +117,7 @@ class DrawingBoardState extends State<DrawingBoard> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).primaryColor,
         title: Center(
           child: Text(
