@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:picpals/friend_search_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'requests/friends_requests.dart';
 
@@ -31,6 +32,19 @@ class FriendPageState extends State<FriendPage> {
               Fluttertoast.showToast(msg: 'Error !');
               return const Text("erreur");
             } else {
+              if (snapshot.data['friends'].length == 0) {
+                return Center(
+                  child: Text(
+                    "Vous n'avez aucun amis :( \nAjoutez-en !",
+                    style: GoogleFonts.getFont(
+                      'Varela Round',
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              }
               //le menu des amis
               Fluttertoast.showToast(msg: 'Friends loaded');
               return Column(

@@ -1,3 +1,4 @@
+import 'package:picpals/friend_navigation.dart';
 import 'package:picpals/main_appbar.dart';
 import 'package:picpals/user_info/manage_preferences.dart';
 import 'dart:convert';
@@ -60,7 +61,7 @@ class HomePageState extends State<HomePage> {
     const ProfilePage(),
     const MainPage(),
     const DrawingBoard(),
-    const FriendPage(),
+    const FriendNavigation(),
   ];
 
   var userPrimaryColor = "#0d1b2a";
