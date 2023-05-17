@@ -16,8 +16,10 @@ class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _MainAppBarState extends State<MainAppBar> {
   @override
   Widget build(BuildContext context) {
+    print(UserInfo.primaryColor);
     return AppBar(
-      backgroundColor: HexColor(UserInfo.primaryColor),
+      automaticallyImplyLeading: false,
+      backgroundColor: HexColor(UserInfo.primaryColor ?? "#FFFFFF"),
       title: Center(
         child: Text(
           "PicPals",

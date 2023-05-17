@@ -152,14 +152,17 @@ class _PostElementState extends State<PostElement> {
                       ),
                     ),
                   ),
-                   Text(
-                    widget.post["date"].toString().substring(0, 10).replaceAll("-", "/"), 
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                   Container(
+                    margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                     child: Text(
+                      widget.post["date"].toString().substring(0, 10).replaceAll("-", "/"), 
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                                     ),
+                   ),
                 ],
               ),
             ),
@@ -182,12 +185,13 @@ class _PostElementState extends State<PostElement> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Commentaires",
+                  "Détails",
                   style: GoogleFonts.getFont(
                     'Varela Round',
                     fontSize: 18,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.bold,
                     color: Colors.white,
+                    
                   ),
                 ),
               ),
