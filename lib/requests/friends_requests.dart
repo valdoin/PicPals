@@ -40,4 +40,17 @@ class FriendRequests {
 
     return res;
   }
+
+  static Future<http.Response> getFriendsRequested() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cookie = prefs.getString('cookie') ?? '';
+
+    http.Response res = await http.get(
+      Uri.parse('${url}getFriendsRequests'),
+      headers: {'content-type': 'application/json', 'cookie': cookie},
+    );
+
+    print(res.body);
+    return res;
+  }
 }

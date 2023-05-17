@@ -110,15 +110,24 @@ class _SearchFormState extends State<SearchForm> {
             } else if (snapshot.hasError) {
               return const Text("error");
             } else {
-              if (snapshot.data!.statusCode != 200) {
-                if (jsonDecode(snapshot.data!.body)["message"] ==
-                    "user already requested") {
-                  return const Text("utilisateur déjà demandé !");
-                }
-                return const Text("L'utilisateur n'existe pas :(");
+              print(jsonDecode(snapshot.data!.body));
+
+              if (jsonDecode(snapshot.data!.body)["message"] ==
+                  "user already requested") {
+                return const Text("utilisateur déjà demandé !");
               }
-              return const Text("Demande envoyé !");
+              if (jsonDecode(snapshot.data!.body)["message"] ==
+                  "friend request sent") {
+                return const Text("demande envoyé !");
+              }
+              if (jsonDecode(snapshot.data!.body)["message"] ==
+                  "friend added") {
+                return const Text("Ami ajouté !");
+              }
+
+              return const Text("L'utilisateur n'existe pas :(");
             }
+            return const Text("Demande envoyé !");
           },
         )
       ],

@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:picpals/friend_requests_page.dart';
 import 'package:picpals/friend_search_page.dart';
-import 'package:picpals/friendpage.dart';
+import 'package:picpals/friend_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'requests/friends_requests.dart';
 
@@ -21,6 +22,7 @@ class FriendNavigationState extends State<FriendNavigation> {
   static final List<Widget> _pages = <Widget>[
     const FriendPage(),
     const SearchForm(),
+    const FriendRequestsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -44,6 +46,10 @@ class FriendNavigationState extends State<FriendNavigation> {
               NavigationDestination(
                 label: "Ajouter",
                 icon: Icon(Icons.add),
+              ),
+              NavigationDestination(
+                label: "Demandes",
+                icon: Icon(Icons.pending),
               ),
             ],
             onDestinationSelected: (index) {
