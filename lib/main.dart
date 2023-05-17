@@ -10,6 +10,9 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'home_page.dart' as home;
 import 'user_info/manage_preferences.dart';
 
+var userPrimaryColor;
+var userSecondaryColor;
+
 void main() {
   runApp(const MyApp());
 }
@@ -297,6 +300,9 @@ class _LoginScreenState extends State<LoginScreen> {
 //sert a renvoyer sur la page selon qu'on soit log ou non
 Future<String> choosePage() async {
   final prefs = await SharedPreferences.getInstance();
+
+  userPrimaryColor = prefs.getString('primaryColor');
+  userSecondaryColor = prefs.getString('secondaryColor');
 
   if (prefs.getString('password') != null) {
     final loginResponse = await AccountRequest.login(
