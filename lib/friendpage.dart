@@ -104,10 +104,6 @@ Future<dynamic> choosePage() async {
   if (res.statusCode == 200) {
     return jsonDecode(res.body);
   } else {
-    //print(res);
-    SharedPreferences.getInstance().then((prefs) {
-      //print(prefs.getString('cookie'));
-    });
     return "error";
   }
 }

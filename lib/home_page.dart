@@ -1,7 +1,7 @@
+import 'package:picpals/main_appbar.dart';
+import 'package:picpals/user_info/manage_preferences.dart';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:picpals/canva.dart';
 import 'package:picpals/friendpage.dart';
@@ -10,22 +10,26 @@ import 'package:picpals/requests/account_requests.dart';
 import 'package:picpals/requests/post_requests.dart';
 import 'package:picpals/user_info/manage_preferences.dart';
 import 'profile.dart';
+import 'package:hexcolor/hexcolor.dart';
 
+/*
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   Color randomColor() {
     return Colors.primaries[Random().nextInt(Colors.primaries.length)];
   }
 
   @override
   Widget build(BuildContext context) {
+
+    print(UserInfo.secondaryColor);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         fontFamily: GoogleFonts.getFont('Varela Round').fontFamily,
-        //primaryColor: Colors.black, //randomColor(),
+        //primaryColor: HexColor(),
         useMaterial3: true,
-        primaryColor: randomColor(),
         scaffoldBackgroundColor: Colors.black,
         textTheme: const TextTheme(
             displaySmall: TextStyle(color: Colors.white),
@@ -35,7 +39,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
+*/
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -63,23 +67,11 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     print(UserInfo.cookie);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        title: Center(
-          child: Text(
-            "PicPals",
-            style: GoogleFonts.getFont(
-              'Varela Round',
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
+      appBar: const MainAppBar(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Theme.of(context).primaryColor,
+        /* backgroundColor: HexColor(
+            UserInfo.secondaryColor),*/ //HexColor(UserInfo.secondaryColor),
         selectedItemColor: Colors.white,
         items: const [
           BottomNavigationBarItem(
@@ -108,49 +100,6 @@ class HomePageState extends State<HomePage> {
         },
         currentIndex: _selectedIndex,
       ),
-      /*
-      body: Container(
-        margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.025,
-            50, MediaQuery.of(context).size.width * 0.025, 0),
-        child: Column(
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-              ),
-              child: Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width * 0.95,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-            Container(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.95,
-                  height: MediaQuery.of(context).size.width * 0.95,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).primaryColor,
-                      width: 10,
-                    ),
-                    image: const DecorationImage(
-                      image: AssetImage('img/squre_img.png'),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),*/
-
       body: _pages.elementAt(_selectedIndex),
     );
   }
@@ -164,7 +113,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  Future<http.Response> _hasPosted = AccountRequest.getHasPosted();
+  final Future<http.Response> _hasPosted = AccountRequest.getHasPosted();
 
   @override
   Widget build(context) {
@@ -172,7 +121,6 @@ class _MainPageState extends State<MainPage> {
       future: _hasPosted,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          print(snapshot.data!.body);
           if (snapshot.data!.statusCode != 200) {
             return const Text("error while fetching user state");
           }
@@ -255,7 +203,7 @@ class _PostElementState extends State<PostElement> {
       height: postSize * 1.22,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(30)),
-        color: Theme.of(context).primaryColor,
+        color: HexColor(widget.post["primaryColor"].toString()),
       ),
       child: Column(
         children: [
@@ -283,8 +231,8 @@ class _PostElementState extends State<PostElement> {
               height: postSize * 0.97,
               width: postSize * 0.97,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
+                  borderRadius: BorderRadius.circular(15.0),
+                  color: HexColor(widget.post["secondaryColor"].toString())),
               child: Image.network(
                 widget.post["url"].toString(),
                 fit: BoxFit.fill,
