@@ -24,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: CircleAvatar(
-                radius: 50,
+                radius: 40,
                 child: Text(UserInfo.name[0] ?? "D",
                     style: const TextStyle(
                       fontSize: 35,
@@ -35,17 +35,29 @@ class _ProfilePageState extends State<ProfilePage> {
               UserInfo.name ?? "default",
               style: const TextStyle(color: Colors.white),
             ),
-            ElevatedButton(
-              onPressed: () {
-                UserInfo.resetInfo();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const HomePage(
-                              title: 'Picpals',
-                            )));
-              },
-              child: const Text('Déconnexion'),
+            const Expanded(child: MainPage()),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      UserInfo.resetInfo();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomePage(
+                                    title: 'Picpals',
+                                  )));
+                    },
+                    child: const Text('Déconnexion'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text("Supprimer le compte"),
+                  )
+                ],
+              ),
             ),
           ],
         ),
@@ -63,10 +75,10 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final Future<http.Response> _userPostsRes =
+      PostRequests.getUserPosts(UserInfo.phone.toString());
   @override
   Widget build(context) {
-    final Future<http.Response> _userPostsRes = PostRequests.getUserPosts(widget.posts["phone"].toString());
-    print("test");
     return FutureBuilder<http.Response>(
       future: _userPostsRes,
       builder: (context, snapshot) {
@@ -80,13 +92,17 @@ class _MainPageState extends State<MainPage> {
           return ListView.builder(
             itemCount: res.length,
             itemBuilder: (context, index) {
+              print(res.toString());
               return PostElement(post: res[index]);
             },
           );
         } else if (snapshot.hasError) {
-          return const Text('error');
+          return const Text(
+            'error',
+            style: TextStyle(color: Colors.white),
+          );
         } else {
-          return const Text('loading...');
+          return const CircularProgressIndicator();
         }
       },
     );
@@ -118,21 +134,33 @@ class _PostElementState extends State<PostElement> {
       child: Column(
         children: [
           SizedBox(
-            //USER
+            // USER
             height: postSize * 0.15,
             child: Container(
               margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  widget.post["author"]["name"].toString(),
-                  style: GoogleFonts.getFont(
-                    'Varela Round',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.post["author"]["name"].toString(),
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
+                   Text(
+                    widget.post["date"].toString().substring(0, 10).replaceAll("-", "/"), 
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -154,7 +182,7 @@ class _PostElementState extends State<PostElement> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Dites ce que vous en pensez...",
+                  "Commentaires",
                   style: GoogleFonts.getFont(
                     'Varela Round',
                     fontSize: 18,

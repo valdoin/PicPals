@@ -31,14 +31,17 @@ class PostRequests {
     return res;
   }
 
+  //recupere tous les posts de l'utilisateur ayant pour numero 'phone'
   static Future<http.Response> getUserPosts(phone) async {
     final prefs = await SharedPreferences.getInstance();
     final cookie = prefs.getString('cookie') ?? '';
 
-    http.Response res = await http.post(Uri.parse('${url}getUserPosts'),
-        headers: {'content-type': 'application/json', 'cookie': cookie}, body: {'phone': phone} );
-        
+    http.Response res = await http.post(
+      Uri.parse('${url}getUserPosts'),
+      headers: {'content-type': 'application/json', 'cookie': cookie},
+      body: jsonEncode({"phone": phone}),
+    );
+
     return res;
   }
-  
 }

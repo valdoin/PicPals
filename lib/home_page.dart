@@ -6,7 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:picpals/canva.dart';
 import 'package:picpals/friendpage.dart';
 import 'package:http/http.dart' as http;
+import 'package:picpals/requests/account_requests.dart';
 import 'package:picpals/requests/post_requests.dart';
+import 'package:picpals/user_info/manage_preferences.dart';
 import 'profile.dart';
 
 class MyApp extends StatelessWidget {
@@ -59,6 +61,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print(UserInfo.cookie);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -154,19 +157,58 @@ class HomePageState extends State<HomePage> {
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key, this.posts});
-
-  final posts;
+  const MainPage({super.key});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  Future<http.Response> _friendsPostsRes = PostRequests.getFriendsPosts();
+  Future<http.Response> _hasPosted = AccountRequest.getHasPosted();
 
   @override
   Widget build(context) {
+    return FutureBuilder<http.Response>(
+      future: _hasPosted,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          print(snapshot.data!.body);
+          if (snapshot.data!.statusCode != 200) {
+            return const Text("error while fetching user state");
+          }
+          if (jsonDecode(snapshot.data!.body)["hasposted"]) {
+            return const PostsView();
+          } else {
+            return const DrawingBoard();
+          }
+        } else if (snapshot.hasError) {
+          return const Text('error');
+        } else {
+          return const Center(
+            child: SizedBox(
+              width: 60,
+              height: 60,
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
+class PostsView extends StatefulWidget {
+  const PostsView({super.key});
+
+  @override
+  State<PostsView> createState() => _PostsViewState();
+}
+
+class _PostsViewState extends State<PostsView> {
+  Future<http.Response> _friendsPostsRes = PostRequests.getFriendsPosts();
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder<http.Response>(
       future: _friendsPostsRes,
       builder: (context, snapshot) {

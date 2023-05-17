@@ -209,14 +209,7 @@ class DrawingBoardState extends State<DrawingBoard> {
                     ),
                   );
                 } else {
-                  return const Text(
-                    'Loading...',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.white,
-                    ),
-                  );
+                  return const CircularProgressIndicator();
                 }
               }),
             ),
