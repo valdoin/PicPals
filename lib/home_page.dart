@@ -8,7 +8,7 @@ import 'package:picpals/friendpage.dart';
 import 'package:http/http.dart' as http;
 import 'package:picpals/requests/account_requests.dart';
 import 'package:picpals/requests/post_requests.dart';
-import 'package:picpals/user_info/manage_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'profile.dart';
 import 'package:hexcolor/hexcolor.dart';
 
@@ -63,6 +63,20 @@ class HomePageState extends State<HomePage> {
     const FriendPage(),
   ];
 
+  var userPrimaryColor = "#0d1b2a";
+  var userSecondaryColor = "#1b263b";
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((prefs) {
+      print(prefs.getString('secondaryColor'));
+      userPrimaryColor = prefs.getString('primaryColor') ?? '#FFFFFF';
+      userSecondaryColor = prefs.getString('secondaryColor') ?? '#FFFFFF';
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     print(UserInfo.cookie);
@@ -70,8 +84,7 @@ class HomePageState extends State<HomePage> {
       appBar: const MainAppBar(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        /* backgroundColor: HexColor(
-            UserInfo.secondaryColor),*/ //HexColor(UserInfo.secondaryColor),
+        backgroundColor: HexColor(userSecondaryColor),
         selectedItemColor: Colors.white,
         items: const [
           BottomNavigationBarItem(
