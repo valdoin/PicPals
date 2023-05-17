@@ -15,6 +15,7 @@ class UserInfo {
   static void updateInfo(
       Response res, SharedPreferences prefs, phone, clearPassword) async {
     final jsonBody = jsonDecode(res.body);
+    print(jsonBody);
     await prefs.setString('cookie', res.headers['set-cookie'] ?? '');
     await prefs.setString('id', jsonBody['id'] ?? '');
     await prefs.setString('phone', phone ?? '');

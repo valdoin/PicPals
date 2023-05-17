@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'user_info/manage_preferences.dart';
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -14,10 +15,23 @@ class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _MainAppBarState extends State<MainAppBar> {
+  var userPrimaryColor = "#0d1b2a";
+  var userSecondaryColor = "#1b263b";
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((prefs) {
+      userPrimaryColor = prefs.getString('primaryColor') ?? '#FFFFFF';
+      userSecondaryColor = prefs.getString('secondaryColor') ?? '#FFFFFF';
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: HexColor(UserInfo.primaryColor),
+      backgroundColor: HexColor(userPrimaryColor),
       title: Center(
         child: Text(
           "PicPals",
