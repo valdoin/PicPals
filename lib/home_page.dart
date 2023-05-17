@@ -180,7 +180,6 @@ class _MainPageState extends State<MainPage> {
           return ListView.builder(
             itemCount: res.length,
             itemBuilder: (context, index) {
-              print(res.toString());
               return PostElement(post: res[index]);
             },
           );
