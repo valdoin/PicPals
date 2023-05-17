@@ -1,10 +1,11 @@
+import 'package:picpals/friend_navigation.dart';
 import 'package:picpals/main_appbar.dart';
 import 'package:picpals/user_info/manage_preferences.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:picpals/canva.dart';
-import 'package:picpals/friendpage.dart';
+import 'package:picpals/friend_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:picpals/requests/account_requests.dart';
 import 'package:picpals/requests/post_requests.dart';
@@ -60,7 +61,7 @@ class HomePageState extends State<HomePage> {
     const ProfilePage(),
     const MainPage(),
     const DrawingBoard(),
-    const FriendPage(),
+    const FriendNavigation(),
   ];
 
   var userPrimaryColor = "#0d1b2a";
