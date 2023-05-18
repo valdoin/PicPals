@@ -25,39 +25,42 @@ class RegisterPageState extends State<RegisterPage> {
       ),
       body: SafeArea(
         child: Center(
-          child: Column(children: [
-            //logo
-            Image.asset(
-              'img/IC.png',
-              height: 225,
-              width: 225,
-            ),
-            //texte
-            Text(
-              'Créez votre compte',
-              style: GoogleFonts.getFont(
-                'Varela Round',
-                color: Colors.white,
-                fontSize: 25,
+          child: SingleChildScrollView(
+            reverse: true,
+            child: Column(children: [
+              //logo
+              Image.asset(
+                'img/IC.png',
+                height: 225,
+                width: 225,
               ),
-            ),
-            //texte
-            Text(
-              "C'est rapide et gratuit !",
-              style: GoogleFonts.getFont(
-                'Varela Round',
-                color: Colors.white,
-                fontStyle: FontStyle.italic,
-                fontSize: 12,
+              //texte
+              Text(
+                'Créez votre compte',
+                style: GoogleFonts.getFont(
+                  'Varela Round',
+                  color: Colors.white,
+                  fontSize: 25,
+                ),
               ),
-            ),
-
-            const SizedBox(height: 20),
-
-            //register form
-
-            const RegisterForm()
-          ]),
+              //texte
+              Text(
+                "C'est rapide et gratuit !",
+                style: GoogleFonts.getFont(
+                  'Varela Round',
+                  color: Colors.white,
+                  fontStyle: FontStyle.italic,
+                  fontSize: 12,
+                ),
+              ),
+          
+              const SizedBox(height: 20),
+          
+              //register form
+          
+              const RegisterForm()
+            ]),
+          ),
         ),
       ),
     );
@@ -262,6 +265,9 @@ class _RegisterFormState extends State<RegisterForm> {
               fontSize: 16,
             ),
           ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
         ),
       ],
     );

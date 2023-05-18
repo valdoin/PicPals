@@ -59,54 +59,57 @@ class HomePageState extends State<HomePage> {
       ),
       body: SafeArea(
         child: Center(
-          child: Column(
-            children: [
-              //logo
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0),
-                child: Image.asset(
-                  'img/IC.png',
-                  height: 225,
-                  width: 225,
-                ),
-              ),
-              //texte
-              Text(
-                'Bienvenue.',
-                style: GoogleFonts.getFont(
-                  'Varela Round',
-                  color: Colors.white,
-                  fontSize: 25,
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              //textfield numéro de téléphone
-              const LoginForm(),
-
-              const SizedBox(height: 10),
-
-              //création compte si nouvel utilisateur
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const RegisterPage()));
-                },
-                child: Text(
-                  'Vous êtes nouveau ? Créez un compte !',
-                  style: GoogleFonts.getFont(
-                    'Varela Round',
-                    color: Colors.lightBlue,
-                    fontStyle: FontStyle.italic,
+          child: SingleChildScrollView(
+            reverse: true,
+            child: Column(
+              children: [
+                //logo
+                Padding(
+                  padding: const EdgeInsets.only(top: 15.0),
+                  child: Image.asset(
+                    'img/IC.png',
+                    height: 225,
+                    width: 225,
                   ),
                 ),
-              ),
-
-              const SizedBox(height: 20),
-            ],
+                //texte
+                Text(
+                  'Bienvenue.',
+                  style: GoogleFonts.getFont(
+                    'Varela Round',
+                    color: Colors.white,
+                    fontSize: 25,
+                  ),
+                ),
+          
+                const SizedBox(height: 20),
+          
+                //textfield numéro de téléphone
+                const LoginForm(),
+          
+                const SizedBox(height: 10),
+          
+                //création compte si nouvel utilisateur
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterPage()));
+                  },
+                  child: Text(
+                    'Vous êtes nouveau ? Créez un compte !',
+                    style: GoogleFonts.getFont(
+                      'Varela Round',
+                      color: Colors.lightBlue,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+          
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
@@ -227,6 +230,9 @@ class _LoginFormState extends State<LoginForm> {
               fontSize: 16,
             ),
           ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
         ),
       ],
     );
