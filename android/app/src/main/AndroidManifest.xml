@@ -4,7 +4,7 @@
     <application
         android:label="PicPals"
         android:name="${applicationName}"
-        android:icon="@mipmap/picpals">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"
