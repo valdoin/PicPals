@@ -32,11 +32,22 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
             final jsonBody = jsonDecode(snapshot.data!.body);
             print(jsonBody);
             if (jsonBody['received'].length == 0) {
-              receivedContent =
-                  Text("Personne ne vous a envoyé de demande :'(");
+              receivedContent = Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                child: Text(
+                  "Personne ne vous a envoyé de demande :'(",
+                  style: GoogleFonts.getFont(
+                    'Varela Round',
+                    fontSize: 20,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              );
             } else {
               receivedContent = SizedBox(
-                height: 200,
+                height: jsonBody['received'].length * 50.0,
                 child: FriendRequestsReceivedView(
                   friends: jsonBody['received'],
                 ),
@@ -44,21 +55,60 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
             }
 
             if (jsonBody['sent'].length == 0) {
-              sentContent = Text("Vous n'avez demandé personne !");
+              sentContent = Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: Text(
+                  "Vous n'avez envoyé aucune demande !",
+                  style: GoogleFonts.getFont(
+                    'Varela Round',
+                    fontSize: 20,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              );
             } else {
               sentContent = SizedBox(
-                height: 75,
+                height: jsonBody['sent'].length * 50.0,
                 child: FriendRequestsSentView(
                   friends: jsonBody['sent'],
                 ),
               );
             }
 
-            return Column(
-              children: [
-                receivedContent,
-                sentContent,
-              ],
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    child: Text(
+                      "Demandes reçues : ",
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  receivedContent,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: Text(
+                      "Demandes envoyées : ",
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  sentContent,
+                ],
+              ),
             );
           } else if (snapshot.hasError) {
             return Text('error');
@@ -139,9 +189,6 @@ class _FriendElementState extends State<FriendElement> {
           CircleAvatar(
             backgroundColor: Colors.grey,
             child: Text('${widget.friend["name"][0]}'.toUpperCase()),
-          ),
-          const SizedBox(
-            width: 20,
           ),
           Expanded(
             child: Text(
