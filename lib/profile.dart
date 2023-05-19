@@ -66,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      AccountRequest.delete(UserInfo.id);
+                                      AccountRequest.delete();
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -134,47 +134,45 @@ class _MainPageState extends State<MainPage> {
 
           var res = jsonDecode(snapshot.data!.body)["posts"];
 
-return ListView.builder(
-  itemCount: res.length + 1, 
-  itemBuilder: (context, index) {
-    if (index == 0) {
-      //affichage de l'en-tête avec avatar et pseudo
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-        child: SizedBox(
-          height: postSize * 0.15,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 35,
-                child: Text(
-                  UserInfo.name[0] ?? "D",
-                  style: const TextStyle(
-                    fontSize: 35,
+          return ListView.builder(
+            itemCount: res.length + 1,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                //affichage de l'en-tête avec avatar et pseudo
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  child: SizedBox(
+                    height: postSize * 0.15,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 35,
+                          child: Text(
+                            UserInfo.name[0] ?? "D",
+                            style: const TextStyle(
+                              fontSize: 35,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                          child: Text(
+                            UserInfo.name ?? "default",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                child: Text(
-                  UserInfo.name ?? "default",
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    
-    //affichage des posts
-    var post = res[index - 1];
-    return PostElement(post: post);
-  },
-);
+                );
+              }
 
+              //affichage des posts
 
+              return PostElement(post: res[index - 1]);
+            },
+          );
         } else if (snapshot.hasError) {
           return const Text(
             'error',
@@ -187,8 +185,6 @@ return ListView.builder(
     );
   }
 }
-
-
 
 class PostElement extends StatefulWidget {
   const PostElement({super.key, this.post});

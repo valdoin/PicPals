@@ -322,16 +322,6 @@ class DrawingBoardState extends State<DrawingBoard> {
                     strokeColor = Colors.blue;
                   });
                 }),
-            //bouton qui permet de changer la couleur du tracé en noir
-            FloatingActionButton(
-                mini: true,
-                shape: const CircleBorder(),
-                backgroundColor: Colors.black,
-                onPressed: () {
-                  setState(() {
-                    strokeColor = Colors.black;
-                  });
-                }),
             //bouton qui permet de choisir sa couleur depuis une palette
             FloatingActionButton(
               mini: true,

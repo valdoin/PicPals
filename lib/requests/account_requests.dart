@@ -23,13 +23,12 @@ class AccountRequest {
     return res;
   }
 
-  static Future<http.Response> delete(String id) async {
+  static Future<http.Response> delete() async {
     final prefs = await SharedPreferences.getInstance();
     final cookie = prefs.getString('cookie') ?? '';
 
-    http.Response res = await http.post(Uri.parse('${url}deleteUser'),
-        headers: {'Content-type': 'application/json', 'cookie': cookie},
-        body: jsonEncode({'id': id}));
+    http.Response res = await http.delete(Uri.parse('${url}deleteUser'),
+        headers: {'Content-type': 'application/json', 'cookie': cookie});
 
     return res;
   }
