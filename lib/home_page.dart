@@ -169,30 +169,40 @@ class PostsView extends StatefulWidget {
 class _PostsViewState extends State<PostsView> {
   Future<http.Response> _friendsPostsRes = PostRequests.getFriendsPosts();
 
+  Future<void> _refresh() async {
+    setState(() {
+      _friendsPostsRes = PostRequests.getFriendsPosts();
+    });
+    return Future<void>.delayed(const Duration(seconds: 2));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<http.Response>(
-      future: _friendsPostsRes,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.statusCode != 200) {
-            return const Text("error");
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      child: FutureBuilder<http.Response>(
+        future: _friendsPostsRes,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data!.statusCode != 200) {
+              return const Text("error");
+            }
+    
+            var res = jsonDecode(snapshot.data!.body)["posts"];
+    
+            return ListView.builder(
+              itemCount: res.length,
+              itemBuilder: (context, index) {
+                return PostElement(post: res[index]);
+              },
+            );
+          } else if (snapshot.hasError) {
+            return const Text('error');
+          } else {
+            return const Text('loading...');
           }
-
-          var res = jsonDecode(snapshot.data!.body)["posts"];
-
-          return ListView.builder(
-            itemCount: res.length,
-            itemBuilder: (context, index) {
-              return PostElement(post: res[index]);
-            },
-          );
-        } else if (snapshot.hasError) {
-          return const Text('error');
-        } else {
-          return const Text('loading...');
-        }
-      },
+        },
+      ),
     );
   }
 }

@@ -16,7 +16,13 @@ class FriendRequestsPage extends StatefulWidget {
 }
 
 class FriendRequestsPageState extends State<FriendRequestsPage> {
-  final Future<http.Response> _res = FriendRequests.getFriendsRequested();
+    Future<http.Response> _res = FriendRequests.getFriendsRequested();
+    Future<void> _refresh() async {
+      setState(() {
+        _res = FriendRequests.getFriendsRequested();
+      });
+      await Future<void>.delayed(const Duration(seconds: 2));
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +56,7 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
                 height: jsonBody['received'].length * 50.0,
                 child: FriendRequestsReceivedView(
                   friends: jsonBody['received'],
+                  refreshPage: _refresh,
                 ),
               );
             }
@@ -122,9 +129,10 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
 }
 
 class FriendRequestsReceivedView extends StatefulWidget {
-  const FriendRequestsReceivedView({super.key, this.friends});
+  const FriendRequestsReceivedView({super.key, this.friends, required this.refreshPage});
 
   final friends;
+  final void Function() refreshPage;
   @override
   State<FriendRequestsReceivedView> createState() =>
       _FriendRequestsReceivedViewState();
@@ -137,7 +145,8 @@ class _FriendRequestsReceivedViewState
     return ListView.builder(
       itemCount: widget.friends.length,
       itemBuilder: (context, index) {
-        return ReceivedFriendElement(friend: widget.friends[index]);
+        return ReceivedFriendElement(friend: widget.friends[index],
+        refreshPage: widget.refreshPage);
       },
     );
   }
@@ -208,7 +217,8 @@ class _FriendElementState extends State<FriendElement> {
 }
 
 class ReceivedFriendElement extends StatefulWidget {
-  const ReceivedFriendElement({super.key, this.friend});
+  const ReceivedFriendElement({super.key, this.friend, required this.refreshPage()});
+  final void Function() refreshPage;
 
   final friend;
 
@@ -249,9 +259,9 @@ class _ReceivedFriendElementState extends State<ReceivedFriendElement> {
             ),
           ),
           ElevatedButton(
-              onPressed: () {
-                FriendRequests.requestFriend(widget.friend['phone']);
-                setState(() {});
+              onPressed: () async {
+                await FriendRequests.requestFriend(widget.friend['phone']);
+                widget.refreshPage();
               },
               child: const Icon(Icons.add))
         ],

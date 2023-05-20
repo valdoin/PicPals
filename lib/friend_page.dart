@@ -16,7 +16,13 @@ class FriendPage extends StatefulWidget {
 }
 
 class FriendPageState extends State<FriendPage> {
-  final Future<dynamic> _choosenPage = choosePage();
+  Future<dynamic> _choosenPage = choosePage();
+
+    Future<void> refreshPage() async {
+    setState(() {
+      _choosenPage = choosePage();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +82,8 @@ class FriendPageState extends State<FriendPage> {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: FriendElement(
-                            friend: snapshot.data['friends'][index]),
+                            friend: snapshot.data['friends'][index],
+                            refreshPage: refreshPage),
                       );
                     },
                   ),
@@ -127,8 +134,8 @@ Future<dynamic> choosePage() async {
 }
 
 class FriendElement extends StatefulWidget {
-  const FriendElement({super.key, this.friend});
-
+  const FriendElement({super.key, this.friend, required this.refreshPage});
+  final Function() refreshPage;
   final friend;
 
   @override
@@ -136,6 +143,11 @@ class FriendElement extends StatefulWidget {
 }
 
 class _FriendElementState extends State<FriendElement> {
+  Future<void> removeFriend() async {
+  await FriendRequests.deleteFriend(widget.friend["phone"].toString());
+  widget.refreshPage();
+}
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -176,8 +188,8 @@ class _FriendElementState extends State<FriendElement> {
                         builder: (context) => ProfilePage(
                               phone: widget.friend["phone"].toString(), name: widget.friend["name"].toString(),
                             )));
-              } else if (result == 'Remove Friend') {
-                FriendRequests.deleteFriend(widget.friend["phone"].toString());
+              } else if (result == 'Remove Friend')  {
+                removeFriend();
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
