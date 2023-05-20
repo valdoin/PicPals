@@ -44,4 +44,16 @@ class AccountRequest {
 
     return res;
   }
+
+  static Future<http.Response> getNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cookie = prefs.getString('cookie') ?? '';
+
+    http.Response res = await http.get(
+      Uri.parse('${url}getNotifications'),
+      headers: {'Content-type': 'application/json', 'cookie': cookie},
+    );
+
+    return res;
+  }
 }

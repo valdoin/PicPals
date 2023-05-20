@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notification_permissions/notification_permissions.dart';
 import 'requests/account_requests.dart';
 import 'package:picpals/requests/responseHandler/account_responses_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,6 +10,8 @@ import 'register.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'home_page.dart' as home;
 import 'user_info/manage_preferences.dart';
+import 'package:flutter/material.dart';
+import 'package:notification_permissions/notification_permissions.dart';
 
 var userPrimaryColor;
 var userSecondaryColor;
@@ -81,14 +84,14 @@ class HomePageState extends State<HomePage> {
                     fontSize: 25,
                   ),
                 ),
-          
+
                 const SizedBox(height: 20),
-          
+
                 //textfield numéro de téléphone
                 const LoginForm(),
-          
+
                 const SizedBox(height: 10),
-          
+
                 //création compte si nouvel utilisateur
                 GestureDetector(
                   onTap: () {
@@ -106,7 +109,7 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-          
+
                 const SizedBox(height: 20),
               ],
             ),
@@ -126,6 +129,17 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  Future<PermissionStatus>? permissionStatusFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    NotificationPermissions.requestNotificationPermissions(
+        iosSettings: const NotificationSettingsIos(
+            sound: true, badge: true, alert: true));
+  }
+
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -232,8 +246,8 @@ class _LoginFormState extends State<LoginForm> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
-        ),
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom)),
       ],
     );
   }
@@ -249,6 +263,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final Future<String> _choosenPage = choosePage();
+  Future<PermissionStatus> permissionStatus =
+      NotificationPermissions.requestNotificationPermissions();
 
   @override
   Widget build(BuildContext context) {

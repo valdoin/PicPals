@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:picpals/friend_navigation.dart';
 import 'package:picpals/main_appbar.dart';
+import 'package:picpals/post_details.dart';
 import 'package:picpals/user_info/manage_preferences.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -13,34 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'profile.dart';
 import 'package:hexcolor/hexcolor.dart';
 
-/*
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  Color randomColor() {
-    return Colors.primaries[Random().nextInt(Colors.primaries.length)];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    print(UserInfo.secondaryColor);
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        fontFamily: GoogleFonts.getFont('Varela Round').fontFamily,
-        //primaryColor: HexColor(),
-        useMaterial3: true,
-        scaffoldBackgroundColor: Colors.black,
-        textTheme: const TextTheme(
-            displaySmall: TextStyle(color: Colors.white),
-            displayMedium: TextStyle(color: Colors.white),
-            displayLarge: TextStyle(color: Colors.white)),
-      ),
-    );
-  }
-}
-*/
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -70,17 +44,17 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
     SharedPreferences.getInstance().then((prefs) {
-      print(prefs.getString('secondaryColor'));
-      userPrimaryColor = prefs.getString('primaryColor') ?? '#FFFFFF';
-      userSecondaryColor = prefs.getString('secondaryColor') ?? '#FFFFFF';
-      setState(() {});
+      setState(() {
+        userPrimaryColor = prefs.getString('primaryColor') ?? '#FFFFFF';
+        userSecondaryColor = prefs.getString('secondaryColor') ?? '#FFFFFF';
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(UserInfo.cookie);
     return Scaffold(
       appBar: const MainAppBar(),
       bottomNavigationBar: BottomNavigationBar(
@@ -209,6 +183,7 @@ class PostElement extends StatefulWidget {
 class _PostElementState extends State<PostElement> {
   @override
   Widget build(context) {
+    print(widget.post);
     var postSize = MediaQuery.of(context).size.width * 0.95;
     return Container(
       margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.025,
@@ -274,19 +249,32 @@ class _PostElementState extends State<PostElement> {
               margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                  "Qu'en pensez-vous ?",
-                  style: GoogleFonts.getFont(
-                    'Varela Round',
-                    fontSize: 18,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                  ),
+                child: RichText(
+                  text: TextSpan(
+                      text: "Qu'en pensez-vous ?",
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 18,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          //diriger vers la page de commentaires
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PostDetailsPage(
+                                      post: widget.post,
+                                    )),
+                          );
+                        }),
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
