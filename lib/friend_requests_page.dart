@@ -16,7 +16,13 @@ class FriendRequestsPage extends StatefulWidget {
 }
 
 class FriendRequestsPageState extends State<FriendRequestsPage> {
-  final Future<http.Response> _res = FriendRequests.getFriendsRequested();
+    Future<http.Response> _res = FriendRequests.getFriendsRequested();
+    Future<void> _refresh() async {
+      setState(() {
+        _res = FriendRequests.getFriendsRequested();
+      });
+      await Future<void>.delayed(const Duration(seconds: 2));
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -32,33 +38,84 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
             final jsonBody = jsonDecode(snapshot.data!.body);
             print(jsonBody);
             if (jsonBody['received'].length == 0) {
-              receivedContent =
-                  Text("Personne ne vous a envoyé de demande :'(");
+              receivedContent = Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                child: Text(
+                  "Personne ne vous a envoyé de demande :'(",
+                  style: GoogleFonts.getFont(
+                    'Varela Round',
+                    fontSize: 20,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              );
             } else {
               receivedContent = SizedBox(
-                height: 200,
+                height: jsonBody['received'].length * 50.0,
                 child: FriendRequestsReceivedView(
                   friends: jsonBody['received'],
+                  refreshPage: _refresh,
                 ),
               );
             }
 
             if (jsonBody['sent'].length == 0) {
-              sentContent = Text("Vous n'avez demandé personne !");
+              sentContent = Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: Text(
+                  "Vous n'avez envoyé aucune demande !",
+                  style: GoogleFonts.getFont(
+                    'Varela Round',
+                    fontSize: 20,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              );
             } else {
               sentContent = SizedBox(
-                height: 75,
+                height: jsonBody['sent'].length * 50.0,
                 child: FriendRequestsSentView(
                   friends: jsonBody['sent'],
                 ),
               );
             }
 
-            return Column(
-              children: [
-                receivedContent,
-                sentContent,
-              ],
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    child: Text(
+                      "Demandes reçues : ",
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  receivedContent,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: Text(
+                      "Demandes envoyées : ",
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  sentContent,
+                ],
+              ),
             );
           } else if (snapshot.hasError) {
             return Text('error');
@@ -72,9 +129,10 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
 }
 
 class FriendRequestsReceivedView extends StatefulWidget {
-  const FriendRequestsReceivedView({super.key, this.friends});
+  const FriendRequestsReceivedView({super.key, this.friends, required this.refreshPage});
 
   final friends;
+  final void Function() refreshPage;
   @override
   State<FriendRequestsReceivedView> createState() =>
       _FriendRequestsReceivedViewState();
@@ -87,7 +145,8 @@ class _FriendRequestsReceivedViewState
     return ListView.builder(
       itemCount: widget.friends.length,
       itemBuilder: (context, index) {
-        return ReceivedFriendElement(friend: widget.friends[index]);
+        return ReceivedFriendElement(friend: widget.friends[index],
+        refreshPage: widget.refreshPage);
       },
     );
   }
@@ -140,9 +199,6 @@ class _FriendElementState extends State<FriendElement> {
             backgroundColor: Colors.grey,
             child: Text('${widget.friend["name"][0]}'.toUpperCase()),
           ),
-          const SizedBox(
-            width: 20,
-          ),
           Expanded(
             child: Text(
               '${widget.friend['name']}',
@@ -161,7 +217,8 @@ class _FriendElementState extends State<FriendElement> {
 }
 
 class ReceivedFriendElement extends StatefulWidget {
-  const ReceivedFriendElement({super.key, this.friend});
+  const ReceivedFriendElement({super.key, this.friend, required this.refreshPage()});
+  final void Function() refreshPage;
 
   final friend;
 
@@ -202,9 +259,9 @@ class _ReceivedFriendElementState extends State<ReceivedFriendElement> {
             ),
           ),
           ElevatedButton(
-              onPressed: () {
-                FriendRequests.requestFriend(widget.friend['phone']);
-                setState(() {});
+              onPressed: () async {
+                await FriendRequests.requestFriend(widget.friend['phone']);
+                widget.refreshPage();
               },
               child: const Icon(Icons.add))
         ],

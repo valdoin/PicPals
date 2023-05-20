@@ -115,18 +115,46 @@ class _SearchFormState extends State<SearchForm> {
 
               if (jsonDecode(snapshot.data!.body)["message"] ==
                   "user already requested") {
-                return const Text("utilisateur déjà demandé !");
+                return Text(
+                  "Utilisateur déjà demandé !",
+                     style: GoogleFonts.getFont(
+                          'Varela Round',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),);
               }
               if (jsonDecode(snapshot.data!.body)["message"] ==
                   "friend request sent") {
-                return const Text("demande envoyé !");
+                return Text(
+                  "Demande envoyée !",
+                     style: GoogleFonts.getFont(
+                          'Varela Round',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),);
               }
               if (jsonDecode(snapshot.data!.body)["message"] ==
                   "friend added") {
-                return const Text("Ami ajouté !");
+                return Text(
+                  "Ami ajouté !",
+                     style: GoogleFonts.getFont(
+                          'Varela Round',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),);
               }
 
-              return const Text("L'utilisateur n'existe pas :(");
+              return Text(
+                "L'utilisateur n'existe pas :(",
+                   style: GoogleFonts.getFont(
+                          'Varela Round',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),);
             }
           },
         )

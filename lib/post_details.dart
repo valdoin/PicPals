@@ -36,7 +36,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                       PostDetailElement(
                         post: widget.post,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text(
