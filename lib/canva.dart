@@ -91,7 +91,7 @@ class DrawingBoardState extends State<DrawingBoard> {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     Offset localPosition = renderBox.globalToLocal(position);
     double adjustY =
-        -140.0; //j'ai du ajuster manuellement le tracé du widget CustomPaint, sans quoi il était décalé par rapport à la position de mon doigt
+        -MediaQuery.of(context).size.height *0.23; //j'ai du ajuster manuellement le tracé du widget CustomPaint, sans quoi il était décalé par rapport à la position de mon doigt
     localPosition = localPosition.translate(0.0, adjustY);
     points.add(
       DrawingPoints(
@@ -190,13 +190,15 @@ class DrawingBoardState extends State<DrawingBoard> {
               future: resPhrase,
               builder: ((context, snapshot) {
                 if (snapshot.hasData) {
-                  return Text(
-                    jsonDecode(snapshot.data!.body)["phrase"]["phrase"]
-                        .toString(),
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.white,
+                  return Center(
+                    child: Text(
+                      jsonDecode(snapshot.data!.body)["phrase"]["phrase"]
+                          .toString(),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.white,
+                      ),
                     ),
                   );
                 }
