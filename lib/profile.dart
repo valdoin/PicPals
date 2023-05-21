@@ -9,6 +9,7 @@ import 'package:picpals/requests/post_requests.dart';
 import 'package:picpals/user_info/manage_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:picpals/requests/account_requests.dart';
+import 'package:picpals/post_details.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -140,7 +141,7 @@ class _MainPageState extends State<MainPage> {
               if (index == 0) {
                 //affichage de l'en-tête avec avatar et pseudo
                 return Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                   child: Column(
                     //mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -153,7 +154,7 @@ class _MainPageState extends State<MainPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Text(
@@ -199,7 +200,7 @@ class _PostElementState extends State<PostElement> {
     return Container(
       margin: EdgeInsets.fromLTRB(
         MediaQuery.of(context).size.width * 0.025,
-        postSize * 0.1,
+        postSize * 0.03,
         MediaQuery.of(context).size.width * 0.025,
         6,
       ),
@@ -263,16 +264,27 @@ class _PostElementState extends State<PostElement> {
             height: postSize * 0.1,
             child: Container(
               margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Détails",
-                  style: GoogleFonts.getFont(
-                    'Varela Round',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontStyle: FontStyle.italic,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PostDetailsPage(
+                              post: widget.post,
+                            )),
+                  );
+                },
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Voir les détails",
+                    style: GoogleFonts.getFont(
+                      'Varela Round',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
               ),

@@ -23,15 +23,15 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(),
-      body: Column(
-        children: [
-          //PostElement(post: widget.post),
-          SizedBox(
-            height: 600,
-            child: Builder(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            //PostElement(post: widget.post),
+            Builder(
               builder: (context) {
                 if (widget.post['comments'].length == 0) {
                   return ListView(
+                    shrinkWrap: true,
                     children: [
                       PostDetailElement(
                         post: widget.post,
@@ -39,13 +39,15 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Text(
-                        "Soyez le premier a commenter !",
-                        style: GoogleFonts.getFont(
-                          'Varela Round',
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      Center(
+                        child: Text(
+                          "Soyez le premier à commenter !",
+                          style: GoogleFonts.getFont(
+                            'Varela Round',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       const SizedBox(
@@ -58,6 +60,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                   );
                 } else {
                   return ListView.builder(
+                    shrinkWrap: true,
                     itemCount: widget.post['comments'].length + 2,
                     itemBuilder: (context, index) {
                       if (index == 0) {
@@ -70,14 +73,15 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                         );
                       }
                       return CommentElement(
-                          comment: widget.post['comments'][index - 1]);
+                        comment: widget.post['comments'][index - 1],
+                      );
                     },
                   );
                 }
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -104,29 +108,42 @@ class _CommentFormState extends State<CommentForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextField(
-          controller: commentFieldController,
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            if (commentFieldController.text.length != 0) {
-              await CommentRequest.create(
-                  commentFieldController.text, widget.post['_id']);
-              commentFieldController.clear();
-            }
-          },
-          child: const Text(
-            'poster !',
-            style: TextStyle(
-              fontSize: 9,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: commentFieldController,
+                  decoration: const InputDecoration(
+                    hintText: 'Ajouter un commentaire...',
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () async {
+                  if (commentFieldController.text.length != 0) {
+                    await CommentRequest.create(
+                        commentFieldController.text, widget.post['_id']);
+                    commentFieldController.clear();
+                  }
+                },
+                icon: const Icon(Icons.send),
+                color: Colors.blue,
+              ),
+            ],
           ),
         ),
         const SizedBox(
           height: 25,
-        )
+        ),
       ],
     );
   }

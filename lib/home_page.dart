@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:picpals/friend_navigation.dart';
+import 'package:picpals/main.dart';
 import 'package:picpals/main_appbar.dart';
 import 'package:picpals/post_details.dart';
 import 'package:picpals/user_info/manage_preferences.dart';
@@ -153,6 +154,7 @@ class _PostsViewState extends State<PostsView> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
+      color: HexColor(userSecondaryColor),
       onRefresh: _refresh,
       child: FutureBuilder<http.Response>(
         future: _friendsPostsRes,
