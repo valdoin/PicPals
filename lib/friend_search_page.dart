@@ -1,18 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:picpals/home_page.dart';
 import 'package:picpals/requests/friends_requests.dart';
 import 'package:picpals/services/notification_service.dart';
 import 'package:picpals/user_info/manage_preferences.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'main_appbar.dart';
 
 class SearchForm extends StatefulWidget {
   const SearchForm({super.key});

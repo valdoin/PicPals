@@ -8,10 +8,9 @@ import 'package:picpals/friend_page.dart';
 import 'package:picpals/main.dart';
 import 'package:picpals/requests/friends_requests.dart';
 import 'package:picpals/requests/post_requests.dart';
-import 'package:picpals/user_info/manage_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:picpals/requests/account_requests.dart';
 import 'package:picpals/main_appbar.dart';
+import 'package:picpals/post_details.dart';
 
 class ProfilePage extends StatefulWidget {
   final String phone;
@@ -61,8 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const FriendPage(
-                                                  )));
+                                                  const FriendPage()));
                                       Fluttertoast.showToast(
                                         msg: "Friend deleted",
                                         toastLength: Toast.LENGTH_SHORT,
@@ -111,29 +109,38 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     var postSize = MediaQuery.of(context).size.width * 0.95;
-    final Future<http.Response> _userPostsRes =
+    Future<http.Response> userPostsRes =
         PostRequests.getUserPosts(widget.phone);
-    return FutureBuilder<http.Response>(
-      future: _userPostsRes,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.statusCode != 200) {
-            return const Text("error");
-          }
 
-          var res = jsonDecode(snapshot.data!.body)["posts"];
+    Future<void> _refresh() async {
+      setState(() {
+        userPostsRes = PostRequests.getFriendsPosts();
+      });
+      return Future<void>.delayed(const Duration(seconds: 2));
+    }
 
-          return ListView.builder(
-            itemCount: res.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                //affichage de l'en-tête avec avatar et pseudo
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: SizedBox(
-                    height: postSize * 0.15,
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      color: HexColor(userSecondaryColor) ?? Colors.black,
+      child: FutureBuilder<http.Response>(
+        future: userPostsRes,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data!.statusCode != 200) {
+              return const Text("error");
+            }
+
+            var res = jsonDecode(snapshot.data!.body)["posts"];
+
+            return ListView.builder(
+              itemCount: res.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  //affichage de l'en-tête avec avatar et pseudo
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CircleAvatar(
                           radius: 35,
@@ -144,33 +151,33 @@ class _MainPageState extends State<MainPage> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                          child: Text(
-                            widget.name,
-                            style: const TextStyle(color: Colors.white),
-                          ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          widget.name,
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ],
                     ),
-                  ),
-                );
-              }
+                  );
+                }
 
-              //affichage des posts
-              var post = res[index - 1];
-              return PostElement(post: post);
-            },
-          );
-        } else if (snapshot.hasError) {
-          return const Text(
-            'error',
-            style: TextStyle(color: Colors.white),
-          );
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
+                //affichage des posts
+                var post = res[index - 1];
+                return PostElement(post: post);
+              },
+            );
+          } else if (snapshot.hasError) {
+            return const Text(
+              'error',
+              style: TextStyle(color: Colors.white),
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
+      ),
     );
   }
 }
@@ -190,7 +197,7 @@ class _PostElementState extends State<PostElement> {
     return Container(
       margin: EdgeInsets.fromLTRB(
         MediaQuery.of(context).size.width * 0.025,
-        postSize * 0.1,
+        postSize * 0.03,
         MediaQuery.of(context).size.width * 0.025,
         6,
       ),
@@ -198,7 +205,7 @@ class _PostElementState extends State<PostElement> {
       height: postSize * 1.22,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(30)),
-        color: HexColor(widget.post["primaryColor"].toString()),
+        color: HexColor(widget.post["primaryColor"].toString()) ?? Colors.black,
       ),
       child: Column(
         children: [
@@ -243,7 +250,7 @@ class _PostElementState extends State<PostElement> {
             width: postSize * 0.97,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15.0),
-              color: HexColor(widget.post["secondaryColor"].toString()),
+              color: HexColor(widget.post["secondaryColor"].toString()) ?? Colors.black,
             ),
             child: Image.network(
               widget.post["url"].toString(),
@@ -254,16 +261,27 @@ class _PostElementState extends State<PostElement> {
             height: postSize * 0.1,
             child: Container(
               margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Détails",
-                  style: GoogleFonts.getFont(
-                    'Varela Round',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontStyle: FontStyle.italic,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PostDetailsPage(
+                              post: widget.post,
+                            )),
+                  );
+                },
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Voir les détails",
+                    style: GoogleFonts.getFont(
+                      'Varela Round',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
               ),

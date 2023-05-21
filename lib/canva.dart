@@ -3,17 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:picpals/eraser_icon_icons.dart';
-import 'package:picpals/home_page.dart';
-import 'dart:ui' as ui;
+import 'package:picpals/home_page.dart' as hp;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
+import 'package:picpals/main.dart';
 import 'package:picpals/requests/phrase_requests.dart';
-import 'dart:typed_data';
 import 'package:widgets_to_image/widgets_to_image.dart';
-import 'dart:io';
-import 'package:image/image.dart' as img;
 import 'requests/post_requests.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -91,7 +88,7 @@ class DrawingBoardState extends State<DrawingBoard> {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     Offset localPosition = renderBox.globalToLocal(position);
     double adjustY =
-        -140.0; //j'ai du ajuster manuellement le tracé du widget CustomPaint, sans quoi il était décalé par rapport à la position de mon doigt
+        -MediaQuery.of(context).size.height *0.23; //j'ai du ajuster manuellement le tracé du widget CustomPaint, sans quoi il était décalé par rapport à la position de mon doigt
     localPosition = localPosition.translate(0.0, adjustY);
     points.add(
       DrawingPoints(
@@ -152,7 +149,7 @@ class DrawingBoardState extends State<DrawingBoard> {
                         PostRequests.create(bytes);
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) {
-                            return const HomePage();
+                            return const hp.HomePage();
                           },
                         ));
                       },
@@ -184,19 +181,21 @@ class DrawingBoardState extends State<DrawingBoard> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 15.0),
+            padding: const EdgeInsets.only(top: 15.0),
             //ici texte d'exemple, sera remplacé par notre phrase aléatoire générée chaque jour
             child: FutureBuilder(
               future: resPhrase,
               builder: ((context, snapshot) {
                 if (snapshot.hasData) {
-                  return Text(
-                    jsonDecode(snapshot.data!.body)["phrase"]["phrase"]
-                        .toString(),
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.white,
+                  return Center(
+                    child: Text(
+                      jsonDecode(snapshot.data!.body)["phrase"]["phrase"]
+                          .toString(),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.white,
+                      ),
                     ),
                   );
                 }
@@ -225,7 +224,7 @@ class DrawingBoardState extends State<DrawingBoard> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color: Colors.white,
+                  color: HexColor(userSecondaryColor),
                 ),
                 //detecte touch input user et fait appel aux fonctions de dessin crées précedemment
                 child: GestureDetector(
@@ -386,7 +385,7 @@ class DrawingBoardState extends State<DrawingBoard> {
               backgroundColor: Colors.white,
               onPressed: () {
                 setState(() {
-                  strokeColor = Colors.white;
+                  strokeColor = HexColor(userSecondaryColor);
                 });
               },
               child: const Icon(

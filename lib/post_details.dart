@@ -1,11 +1,6 @@
-import 'dart:ffi';
-
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:picpals/friend_profile.dart';
 import 'package:picpals/main_appbar.dart';
 import 'package:picpals/requests/comment_requests.dart';
 
@@ -22,25 +17,21 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar(),
+      appBar: const MainAppBar(),
       body: Column(
         children: [
-          //PostElement(post: widget.post),
-          SizedBox(
-            height: 600,
-            child: Builder(
-              builder: (context) {
-                if (widget.post['comments'].length == 0) {
-                  return ListView(
-                    children: [
-                      PostDetailElement(
-                        post: widget.post,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        "Soyez le premier a commenter !",
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  PostDetailElement(
+                    post: widget.post,
+                  ),
+                  const SizedBox(height: 10),
+                  if (widget.post['comments'].isEmpty)
+                    Center(
+                      child: Text(
+                        "Soyez le premier à commenter !",
                         style: GoogleFonts.getFont(
                           'Varela Round',
                           fontSize: 18,
@@ -48,40 +39,33 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      CommentForm(
-                        post: widget.post,
-                      ),
-                    ],
-                  );
-                } else {
-                  return ListView.builder(
-                    itemCount: widget.post['comments'].length + 2,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return PostDetailElement(
-                          post: widget.post,
-                        );
-                      } else if (index > widget.post['comments'].length) {
-                        return CommentForm(
-                          post: widget.post,
-                        );
-                      }
-                      return CommentElement(
-                          comment: widget.post['comments'][index - 1]);
-                    },
-                  );
-                }
-              },
+                    ),
+                  if (widget.post['comments'].isNotEmpty)
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: widget.post['comments'].length,
+                      itemBuilder: (context, index) {
+                        var comment = widget.post['comments'][index];
+                        return CommentElement(comment: comment);
+                      },
+                    ),
+                ],
+              ),
             ),
+          ),
+          const SizedBox(height: 15),
+          CommentForm(
+            post: widget.post,
           ),
         ],
       ),
     );
   }
 }
+
+
+
 
 class CommentForm extends StatefulWidget {
   const CommentForm({super.key, this.post});
@@ -93,40 +77,57 @@ class CommentForm extends StatefulWidget {
 
 class _CommentFormState extends State<CommentForm> {
   final commentFieldController = TextEditingController();
+  final FocusNode commentFocusNode = FocusNode();
 
   @override
   void dispose() {
     super.dispose();
     commentFieldController.dispose();
+    commentFocusNode.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextField(
-          controller: commentFieldController,
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            if (commentFieldController.text.length != 0) {
-              await CommentRequest.create(
-                  commentFieldController.text, widget.post['_id']);
-              commentFieldController.clear();
-            }
-          },
-          child: const Text(
-            'poster !',
-            style: TextStyle(
-              fontSize: 9,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: commentFieldController,
+                  focusNode: commentFocusNode,
+                  decoration: const InputDecoration(
+                    hintText: 'Ajouter un commentaire...',
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () async {
+                  if (commentFieldController.text.isNotEmpty) {
+                    await CommentRequest.create(
+                        commentFieldController.text, widget.post['_id']);
+                    commentFieldController.clear();
+                    commentFocusNode.unfocus();
+                  }
+                },
+                icon: const Icon(Icons.send),
+                color: Colors.blue,
+              ),
+            ],
           ),
         ),
         const SizedBox(
           height: 25,
-        )
+        ),
       ],
     );
   }
@@ -140,7 +141,6 @@ class CommentElement extends StatefulWidget {
   @override
   State<CommentElement> createState() => CommentElementState();
 }
-
 class CommentElementState extends State<CommentElement> {
   @override
   Widget build(BuildContext context) {
@@ -149,41 +149,79 @@ class CommentElementState extends State<CommentElement> {
         SizedBox(
           height: 65,
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 20,
-                child: Text(widget.comment['author']['name'][0]),
-              ),
-              Column(
-                children: [
-                  SizedBox(
-                    height: 25,
-                    child: Text(
-                      widget.comment['author']['name'],
-                      style: const TextStyle(
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: CircleAvatar(
+                  radius: 20,
+                  child: Text(
+                    widget.comment['author']['name'][0],
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
-                  Row(children: [
-                    const SizedBox(
-                      width: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          widget.comment['author']['name'],
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Text(
+                            widget.comment['date'].toString()
+                            .substring(0, 10)
+                            .replaceAll("-", "/"),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 5),
                     Text(
                       widget.comment['body'],
                       style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                         color: Colors.white,
                       ),
                     ),
-                  ]),
-                ],
-              )
+                  ],
+                ),
+              ),
             ],
           ),
+        ),
+        const Divider(),
+      ],
+    );
+  }
+}
+
+
+
+
+
+
+
 
           /*
           child: Row(
@@ -228,12 +266,7 @@ class CommentElementState extends State<CommentElement> {
               )
             ],
           ),*/
-        ),
-        SizedBox(height: 10)
-      ],
-    );
-  }
-}
+    
 
 class PostDetailElement extends StatefulWidget {
   const PostDetailElement({super.key, this.post});
