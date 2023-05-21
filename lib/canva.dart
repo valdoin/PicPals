@@ -4,15 +4,10 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:picpals/eraser_icon_icons.dart';
 import 'package:picpals/home_page.dart';
-import 'dart:ui' as ui;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import 'package:picpals/requests/phrase_requests.dart';
-import 'dart:typed_data';
 import 'package:widgets_to_image/widgets_to_image.dart';
-import 'dart:io';
-import 'package:image/image.dart' as img;
 import 'requests/post_requests.dart';
 
 class MyApp extends StatelessWidget {
@@ -184,7 +179,7 @@ class DrawingBoardState extends State<DrawingBoard> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 15.0),
+            padding: const EdgeInsets.only(top: 15.0),
             //ici texte d'exemple, sera remplacé par notre phrase aléatoire générée chaque jour
             child: FutureBuilder(
               future: resPhrase,

@@ -8,9 +8,7 @@ import 'package:picpals/friend_page.dart';
 import 'package:picpals/main.dart';
 import 'package:picpals/requests/friends_requests.dart';
 import 'package:picpals/requests/post_requests.dart';
-import 'package:picpals/user_info/manage_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:picpals/requests/account_requests.dart';
 import 'package:picpals/main_appbar.dart';
 import 'package:picpals/post_details.dart';
 
@@ -111,21 +109,21 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     var postSize = MediaQuery.of(context).size.width * 0.95;
-    Future<http.Response> _userPostsRes =
+    Future<http.Response> userPostsRes =
         PostRequests.getUserPosts(widget.phone);
 
     Future<void> _refresh() async {
       setState(() {
-        _userPostsRes = PostRequests.getFriendsPosts();
+        userPostsRes = PostRequests.getFriendsPosts();
       });
       return Future<void>.delayed(const Duration(seconds: 2));
     }
 
     return RefreshIndicator(
       onRefresh: _refresh,
-      color: HexColor(userSecondaryColor),
+      color: HexColor(userSecondaryColor) ?? Colors.black,
       child: FutureBuilder<http.Response>(
-        future: _userPostsRes,
+        future: userPostsRes,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.statusCode != 200) {
@@ -207,7 +205,7 @@ class _PostElementState extends State<PostElement> {
       height: postSize * 1.22,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(30)),
-        color: HexColor(widget.post["primaryColor"].toString()),
+        color: HexColor(widget.post["primaryColor"].toString()) ?? Colors.black,
       ),
       child: Column(
         children: [
@@ -252,7 +250,7 @@ class _PostElementState extends State<PostElement> {
             width: postSize * 0.97,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15.0),
-              color: HexColor(widget.post["secondaryColor"].toString()),
+              color: HexColor(widget.post["secondaryColor"].toString()) ?? Colors.black,
             ),
             child: Image.network(
               widget.post["url"].toString(),

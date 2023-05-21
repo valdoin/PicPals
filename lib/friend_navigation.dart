@@ -1,12 +1,9 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:picpals/friend_requests_page.dart';
 import 'package:picpals/friend_search_page.dart';
 import 'package:picpals/friend_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'requests/friends_requests.dart';
 
 class FriendNavigation extends StatefulWidget {

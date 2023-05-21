@@ -1,11 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:picpals/friend_search_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'requests/friends_requests.dart';
 
 class FriendRequestsPage extends StatefulWidget {
@@ -118,9 +115,9 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
               ),
             );
           } else if (snapshot.hasError) {
-            return Text('error');
+            return const Text('error');
           } else {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
         },
       ),
