@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:picpals/home_page.dart';
 import 'package:picpals/requests/friends_requests.dart';
+import 'package:picpals/services/notification_service.dart';
 import 'package:picpals/user_info/manage_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -73,16 +76,14 @@ class _SearchFormState extends State<SearchForm> {
             ),
           ),
         ),
-
         const SizedBox(height: 10),
-
-        //bouton connexion
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: HexColor(UserInfo.primaryColor),
             elevation: 0,
           ),
-          onPressed: () {
+          onPressed: () async {
+            NotificationService.showNotification(title: 'helo', body: 'kiks');
             setState(() {
               searchRes = FriendRequests.requestFriend(
                   '+$phoneCode${phoneController.text}');

@@ -141,29 +141,26 @@ class _MainPageState extends State<MainPage> {
                 //affichage de l'en-tête avec avatar et pseudo
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: SizedBox(
-                    height: postSize * 0.15,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 35,
-                          child: Text(
-                            UserInfo.name[0] ?? "D",
-                            style: const TextStyle(
-                              fontSize: 35,
-                            ),
+                  child: Column(
+                    //mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 35,
+                        child: Text(
+                          UserInfo.name[0] ?? "D",
+                          style: const TextStyle(
+                            fontSize: 35,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                          child: Text(
-                            UserInfo.name ?? "default",
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        UserInfo.name ?? "default",
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
                   ),
                 );
               }
