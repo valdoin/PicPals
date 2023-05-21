@@ -1,1 +1,1 @@
-const serverIp = '192.168.112.198';
+const serverIp = '10.188.6.215';

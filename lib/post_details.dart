@@ -77,11 +77,13 @@ class CommentForm extends StatefulWidget {
 
 class _CommentFormState extends State<CommentForm> {
   final commentFieldController = TextEditingController();
+  final FocusNode commentFocusNode = FocusNode();
 
   @override
   void dispose() {
     super.dispose();
     commentFieldController.dispose();
+    commentFocusNode.dispose();
   }
 
   @override
@@ -99,6 +101,7 @@ class _CommentFormState extends State<CommentForm> {
               Expanded(
                 child: TextField(
                   controller: commentFieldController,
+                  focusNode: commentFocusNode,
                   decoration: const InputDecoration(
                     hintText: 'Ajouter un commentaire...',
                     contentPadding:
@@ -113,6 +116,7 @@ class _CommentFormState extends State<CommentForm> {
                     await CommentRequest.create(
                         commentFieldController.text, widget.post['_id']);
                     commentFieldController.clear();
+                    commentFocusNode.unfocus();
                   }
                 },
                 icon: const Icon(Icons.send),
@@ -147,43 +151,61 @@ class CommentElementState extends State<CommentElement> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 20,
-                child: Text(
-                  widget.comment['author']['name'][0],
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: CircleAvatar(
+                  radius: 20,
+                  child: Text(
+                    widget.comment['author']['name'][0],
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    widget.comment['author']['name'],
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          widget.comment['author']['name'],
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Text(
+                            widget.comment['date'].toString()
+                            .substring(0, 10)
+                            .replaceAll("-", "/"),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Expanded(
-                    child: Text(
+                    const SizedBox(height: 5),
+                    Text(
                       widget.comment['body'],
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.white,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -193,6 +215,10 @@ class CommentElementState extends State<CommentElement> {
     );
   }
 }
+
+
+
+
 
 
 
