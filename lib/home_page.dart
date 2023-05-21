@@ -161,12 +161,17 @@ class _PostsViewState extends State<PostsView> {
             if (snapshot.data!.statusCode != 200) {
               return const Text("error");
             }
-    
+
             var res = jsonDecode(snapshot.data!.body)["posts"];
-    
+            var userPostId = jsonDecode(snapshot.data!.body)["userPostId"];
+
             return ListView.builder(
               itemCount: res.length,
               itemBuilder: (context, index) {
+                print('dernier post = $userPostId');
+                if (userPostId == res[index]["_id"]) {
+                  return UserPostElement(post: res[index]);
+                }
                 return PostElement(post: res[index]);
               },
             );
@@ -291,7 +296,125 @@ class _PostElementState extends State<PostElement> {
   }
 }
 
-//TODO faire une class post qui affihce un post unique avec en parametre un post puis on met ca dans un future builder que l'on met dans une list view 
+class UserPostElement extends StatefulWidget {
+  const UserPostElement({super.key, this.post});
 
-/*
-idee : couleur atitré chaque jour/ personne et un post = la bordure de couleur + le fond du post noir + la feuille du canvas de couleur */
+  final post;
+
+  @override
+  State<UserPostElement> createState() => _UserPostElementState();
+}
+
+class _UserPostElementState extends State<UserPostElement> {
+  @override
+  Widget build(context) {
+    var postSize = MediaQuery.of(context).size.width * 0.95;
+    return Container(
+      margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.025,
+          postSize * 0.1, MediaQuery.of(context).size.width * 0.025, 6),
+      width: postSize,
+      height: postSize * 1.22,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(30)),
+        color: HexColor(widget.post["primaryColor"].toString()),
+      ),
+      child: Column(
+        children: [
+          SizedBox(
+            height: postSize * 0.15,
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.post["author"]["name"].toString(),
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                    child: Text(
+                      widget.post["date"]
+                          .toString()
+                          .substring(0, 10)
+                          .replaceAll("-", "/"),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  PopupMenuButton<String>(
+                    onSelected: (String result) async {
+                      if (result == 'Delete post') {
+                        await PostRequests.deletePost(widget.post["_id"]);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<String>>[
+                      const PopupMenuItem<String>(
+                        value: 'Delete post',
+                        child: Text("Supprimer le post"),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+              //image ici
+              height: postSize * 0.97,
+              width: postSize * 0.97,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.0),
+                  color: HexColor(widget.post["secondaryColor"].toString())),
+              child: Image.network(
+                widget.post["url"].toString(),
+                fit: BoxFit.fill,
+              )),
+          SizedBox(
+            height: postSize * 0.1,
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: RichText(
+                  text: TextSpan(
+                      text: "Qu'en pensez-vous ?",
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 18,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          //diriger vers la page de commentaires
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PostDetailsPage(
+                                      post: widget.post,
+                                    )),
+                          );
+                        }),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

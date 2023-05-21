@@ -21,6 +21,17 @@ class PostRequests {
     return res;
   }
 
+  static Future<http.Response> deletePost(postId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final cookie = prefs.getString('cookie') ?? '';
+
+    http.Response res = await http.delete(Uri.parse('${url}deletePost'),
+        headers: {'content-type': 'application/json', 'cookie': cookie},
+        body: jsonEncode({"postId": postId}));
+
+    return res;
+  }
+
   static Future<http.Response> getFriendsPosts() async {
     final prefs = await SharedPreferences.getInstance();
     final cookie = prefs.getString('cookie') ?? '';
