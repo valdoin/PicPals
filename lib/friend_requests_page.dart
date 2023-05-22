@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
+import 'package:picpals/main.dart';
 import 'requests/friends_requests.dart';
 
 class FriendRequestsPage extends StatefulWidget {
@@ -13,13 +15,13 @@ class FriendRequestsPage extends StatefulWidget {
 }
 
 class FriendRequestsPageState extends State<FriendRequestsPage> {
-    Future<http.Response> _res = FriendRequests.getFriendsRequested();
-    Future<void> _refresh() async {
-      setState(() {
-        _res = FriendRequests.getFriendsRequested();
-      });
-      await Future<void>.delayed(const Duration(seconds: 2));
-    }
+  Future<http.Response> _res = FriendRequests.getFriendsRequested();
+  Future<void> _refresh() async {
+    setState(() {
+      _res = FriendRequests.getFriendsRequested();
+    });
+    await Future<void>.delayed(const Duration(seconds: 2));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,7 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
                     fontSize: 20,
                     fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               );
@@ -68,7 +70,7 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
                     fontSize: 20,
                     fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               );
@@ -93,7 +95,7 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
                         'Varela Round',
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -106,7 +108,7 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
                         'Varela Round',
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -126,7 +128,8 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
 }
 
 class FriendRequestsReceivedView extends StatefulWidget {
-  const FriendRequestsReceivedView({super.key, this.friends, required this.refreshPage});
+  const FriendRequestsReceivedView(
+      {super.key, this.friends, required this.refreshPage});
 
   final friends;
   final void Function() refreshPage;
@@ -142,8 +145,8 @@ class _FriendRequestsReceivedViewState
     return ListView.builder(
       itemCount: widget.friends.length,
       itemBuilder: (context, index) {
-        return ReceivedFriendElement(friend: widget.friends[index],
-        refreshPage: widget.refreshPage);
+        return ReceivedFriendElement(
+            friend: widget.friends[index], refreshPage: widget.refreshPage);
       },
     );
   }
@@ -214,7 +217,8 @@ class _FriendElementState extends State<FriendElement> {
 }
 
 class ReceivedFriendElement extends StatefulWidget {
-  const ReceivedFriendElement({super.key, this.friend, required this.refreshPage()});
+  const ReceivedFriendElement(
+      {super.key, this.friend, required this.refreshPage()});
   final void Function() refreshPage;
 
   final friend;
@@ -228,9 +232,9 @@ class _ReceivedFriendElementState extends State<ReceivedFriendElement> {
   Widget build(BuildContext context) {
     return Container(
       height: 50,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-        color: Colors.white,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(30)),
+        color: HexColor(userSecondaryColor ?? '#FFFFFF'),
       ),
       child: Row(
         children: [

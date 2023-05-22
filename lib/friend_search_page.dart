@@ -5,10 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:picpals/main.dart';
 import 'package:picpals/requests/friends_requests.dart';
 import 'package:picpals/services/notification_service.dart';
 import 'package:picpals/user_info/manage_preferences.dart';
-
 
 class SearchForm extends StatefulWidget {
   const SearchForm({super.key});
@@ -43,31 +43,31 @@ class _SearchFormState extends State<SearchForm> {
             controller: phoneController,
             invalidNumberMessage: "Numéro invalide",
             autofocus: false,
-            cursorColor: Theme.of(context).primaryColor,
+            cursorColor: HexColor(userPrimaryColor),
             dropdownTextStyle: const TextStyle(
-              color: Colors.white,
+              color: Colors.black,
               fontSize: 16,
             ),
             searchText: "Chercher un pays",
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.black,
             ),
             initialCountryCode: 'FR',
             onCountryChanged: (country) {
               phoneCode = country.dialCode;
             },
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               counterText: '',
               labelText: 'Numéro de téléphone',
-              labelStyle: TextStyle(
-                color: Colors.white,
+              labelStyle: const TextStyle(
+                color: Colors.black,
               ),
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
+                borderSide: BorderSide(color: HexColor(userPrimaryColor)),
               ),
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
+                borderSide: BorderSide(color: HexColor(userSecondaryColor)),
               ),
             ),
           ),
@@ -113,44 +113,48 @@ class _SearchFormState extends State<SearchForm> {
                   "user already requested") {
                 return Text(
                   "Utilisateur déjà demandé !",
-                     style: GoogleFonts.getFont(
-                          'Varela Round',
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),);
+                  style: GoogleFonts.getFont(
+                    'Varela Round',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                );
               }
               if (jsonDecode(snapshot.data!.body)["message"] ==
                   "friend request sent") {
                 return Text(
                   "Demande envoyée !",
-                     style: GoogleFonts.getFont(
-                          'Varela Round',
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),);
+                  style: GoogleFonts.getFont(
+                    'Varela Round',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                );
               }
               if (jsonDecode(snapshot.data!.body)["message"] ==
                   "friend added") {
                 return Text(
                   "Ami ajouté !",
-                     style: GoogleFonts.getFont(
-                          'Varela Round',
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),);
+                  style: GoogleFonts.getFont(
+                    'Varela Round',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                );
               }
 
               return Text(
                 "L'utilisateur n'existe pas :(",
-                   style: GoogleFonts.getFont(
-                          'Varela Round',
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),);
+                style: GoogleFonts.getFont(
+                  'Varela Round',
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              );
             }
           },
         )

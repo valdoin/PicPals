@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:picpals/canva.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,6 +38,18 @@ class AccountResponseHandler {
           builder: (context) => const DrawingBoard(),
         ),
       );
+    }
+  }
+
+  static void notifications(BuildContext context, http.Response res) async {
+    if (res.statusCode != 400) {
+      final notifs = jsonDecode(res.body)["notifications"];
+
+      if (notifs.length != 0) {
+        for (int i = 0; i < notifs.length; i++) {
+          if (notifs[i] == "timetopost") {}
+        }
+      }
     }
   }
 }

@@ -146,6 +146,7 @@ class _MainPageState extends State<MainPage> {
                     //mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircleAvatar(
+                        backgroundColor: HexColor(userSecondaryColor),
                         radius: 35,
                         child: Text(
                           UserInfo.name[0] ?? "D",
@@ -159,7 +160,7 @@ class _MainPageState extends State<MainPage> {
                       ),
                       Text(
                         UserInfo.name ?? "default",
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.black),
                       ),
                     ],
                   ),

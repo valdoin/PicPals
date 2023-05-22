@@ -55,6 +55,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: HexColor('#FCFBF4'),
       appBar: const MainAppBar(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -225,7 +226,7 @@ class _PostElementState extends State<PostElement> {
                         'Varela Round',
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -239,7 +240,7 @@ class _PostElementState extends State<PostElement> {
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -253,7 +254,8 @@ class _PostElementState extends State<PostElement> {
               width: postSize * 0.97,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
-                  color: HexColor(widget.post["secondaryColor"].toString()) ?? Colors.black),
+                  color: HexColor(widget.post["secondaryColor"].toString()) ??
+                      Colors.black),
               child: Image.network(
                 widget.post["url"].toString(),
                 fit: BoxFit.fill,
@@ -353,6 +355,7 @@ class _UserPostElementState extends State<UserPostElement> {
                     ),
                   ),
                   PopupMenuButton<String>(
+                    color: Colors.white,
                     onSelected: (String result) async {
                       if (result == 'Delete post') {
                         await PostRequests.deletePost(widget.post["_id"]);
