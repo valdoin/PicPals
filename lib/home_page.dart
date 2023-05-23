@@ -30,6 +30,7 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+//les differentes pages accessibles depuis la navbar
   static final List<Widget> _pages = <Widget>[
     const ProfilePage(),
     const MainPage(),
@@ -55,38 +56,57 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: HexColor('#FCFBF4'),
+      backgroundColor: Color(0xFF121212), //HexColor('#FCFBF4'),
       appBar: const MainAppBar(),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: HexColor(userSecondaryColor) ?? Colors.black,
-        selectedItemColor: Colors.white,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.account_circle,
-            ),
-            label: 'Profil',
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+          boxShadow: [
+            BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 10),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Accueil',
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: HexColor(userSecondaryColor) ?? Colors.black,
+            selectedItemColor: Colors.white,
+            elevation: 0,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.account_circle,
+                ),
+                label: 'Profil',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Accueil',
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.draw), label: 'Dessiner'),
+              BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Amis'),
+            ],
+            onTap: (index) {
+              if (index == 2) {
+                //ici rajouter condition pour voir si l'user a déjà dessiné et lui afficher erreur dans un toast le cas échéant, sinon le rediriger
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const DrawingBoard()),
+                );
+              } else {
+                _onItemTapped(index);
+              }
+            },
+            currentIndex: _selectedIndex,
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.draw), label: 'Dessiner'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Amis'),
-        ],
-        onTap: (index) {
-          if (index == 2) {
-            //ici rajouter condition pour voir si l'user a déjà dessiné et lui afficher erreur dans un toast le cas échéant, sinon le rediriger
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const DrawingBoard()),
-            );
-          } else {
-            _onItemTapped(index);
-          }
-        },
-        currentIndex: _selectedIndex,
+        ),
       ),
       body: _pages.elementAt(_selectedIndex),
     );

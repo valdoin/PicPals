@@ -33,7 +33,8 @@ class _MainAppBarState extends State<MainAppBar> {
     print(UserInfo.primaryColor);
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: HexColor(userPrimaryColor),
+      elevation: 0,
+      backgroundColor: Colors.transparent, //HexColor(userPrimaryColor),
       title: Center(
         child: Text(
           "PicPals",

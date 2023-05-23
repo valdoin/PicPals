@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'PicPals',
       theme: ThemeData(
         fontFamily: GoogleFonts.getFont('Varela Round').fontFamily,
@@ -75,7 +76,6 @@ class HomePageState extends State<HomePage> {
                     width: 225,
                   ),
                 ),
-                //texte
                 Text(
                   'Bienvenue.',
                   style: GoogleFonts.getFont(
