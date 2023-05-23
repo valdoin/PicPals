@@ -55,4 +55,18 @@ class PostRequests {
 
     return res;
   }
+
+  //recupere un post specifique
+  static Future<http.Response> getPost(id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final cookie = prefs.getString('cookie') ?? '';
+
+    http.Response res = await http.post(
+      Uri.parse('${url}getPost'),
+      headers: {'content-type': 'application/json', 'cookie': cookie},
+      body: jsonEncode({"postId": id}),
+    );
+
+    return res;
+  }
 }

@@ -154,7 +154,6 @@ class _FriendElementState extends State<FriendElement> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.friend);
     return Container(
       height: 50,
       decoration: BoxDecoration(

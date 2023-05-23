@@ -75,7 +75,7 @@ class HomePageState extends State<HomePage> {
           ),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            backgroundColor: HexColor(userSecondaryColor) ?? Colors.black,
+            backgroundColor: HexColor(userSecondaryColor),
             selectedItemColor: Colors.white,
             elevation: 0,
             items: const [
@@ -173,7 +173,7 @@ class _PostsViewState extends State<PostsView> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      color: HexColor(userSecondaryColor) ?? Colors.black,
+      color: HexColor(userSecondaryColor),
       onRefresh: _refresh,
       child: FutureBuilder<http.Response>(
         future: _friendsPostsRes,
@@ -189,7 +189,6 @@ class _PostsViewState extends State<PostsView> {
             return ListView.builder(
               itemCount: res.length,
               itemBuilder: (context, index) {
-                print('dernier post = $userPostId');
                 if (userPostId == res[index]["_id"]) {
                   return UserPostElement(post: res[index]);
                 }
@@ -219,7 +218,6 @@ class PostElement extends StatefulWidget {
 class _PostElementState extends State<PostElement> {
   @override
   Widget build(context) {
-    print(widget.post);
     var postSize = MediaQuery.of(context).size.width * 0.95;
     return Container(
       margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.025,
@@ -228,7 +226,7 @@ class _PostElementState extends State<PostElement> {
       height: postSize * 1.22,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(30)),
-        color: HexColor(widget.post["primaryColor"].toString()) ?? Colors.black,
+        color: HexColor(widget.post["primaryColor"].toString()),
       ),
       child: Column(
         children: [
@@ -274,8 +272,7 @@ class _PostElementState extends State<PostElement> {
               width: postSize * 0.97,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
-                  color: HexColor(widget.post["secondaryColor"].toString()) ??
-                      Colors.black),
+                  color: HexColor(widget.post["secondaryColor"].toString())),
               child: Image.network(
                 widget.post["url"].toString(),
                 fit: BoxFit.fill,
@@ -299,12 +296,11 @@ class _PostElementState extends State<PostElement> {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           //diriger vers la page de commentaires
-
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => PostDetailsPage(
-                                      post: widget.post,
+                                      post: widget.post["_id"],
                                     )),
                           );
                         }),
@@ -428,7 +424,7 @@ class _UserPostElementState extends State<UserPostElement> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => PostDetailsPage(
-                                      post: widget.post,
+                                      post: widget.post["_id"],
                                     )),
                           );
                         }),

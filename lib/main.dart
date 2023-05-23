@@ -10,8 +10,6 @@ import 'register.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'home_page.dart' as home;
 import 'user_info/manage_preferences.dart';
-import 'package:flutter/material.dart';
-import 'package:notification_permissions/notification_permissions.dart';
 
 var userPrimaryColor;
 var userSecondaryColor;
