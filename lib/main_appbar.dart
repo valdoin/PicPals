@@ -34,6 +34,7 @@ class _MainAppBarState extends State<MainAppBar> {
     return AppBar(
       elevation: 0,
       scrolledUnderElevation: 0,
+      automaticallyImplyLeading: false,
       backgroundColor: Colors.transparent, //HexColor(userPrimaryColor),
       title: Center(
         child: Text(

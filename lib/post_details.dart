@@ -32,6 +32,8 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
     var _postRes = PostRequests.getPost(widget.post);
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      extendBody: true,
       appBar: const MainAppBar(),
       bottomNavigationBar: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20),

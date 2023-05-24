@@ -45,12 +45,12 @@ class _SearchFormState extends State<SearchForm> {
             autofocus: false,
             cursorColor: HexColor(userPrimaryColor),
             dropdownTextStyle: const TextStyle(
-              color: Colors.black,
+              color: Colors.white,
               fontSize: 16,
             ),
             searchText: "Chercher un pays",
             style: const TextStyle(
-              color: Colors.black,
+              color: Colors.white,
             ),
             initialCountryCode: 'FR',
             onCountryChanged: (country) {
@@ -60,7 +60,7 @@ class _SearchFormState extends State<SearchForm> {
               counterText: '',
               labelText: 'Numéro de téléphone',
               labelStyle: const TextStyle(
-                color: Colors.black,
+                color: Colors.white,
               ),
               border: const OutlineInputBorder(),
               focusedBorder: OutlineInputBorder(

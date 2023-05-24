@@ -27,7 +27,7 @@ class FriendPageState extends State<FriendPage> {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        color: HexColor('#FCFBF4'),
+        color: const Color(0xFF121212),
         child: DefaultTextStyle(
           style: Theme.of(context).textTheme.displayMedium!,
           textAlign: TextAlign.center,
@@ -61,33 +61,31 @@ class FriendPageState extends State<FriendPage> {
                   Fluttertoast.showToast(msg: 'Friends loaded');
                   return Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 20, 10, 0),
-                        child: Text(
-                          'Vos amis',
-                          style: GoogleFonts.getFont(
-                            'Varela Round',
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                      Text(
+                        'Vos amis',
+                        style: GoogleFonts.getFont(
+                          'Varela Round',
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      ListView.builder(
-                        itemCount: snapshot.data['friends'].length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: FriendElement(
-                                friend: snapshot.data['friends'][index],
-                                refreshPage: refreshPage),
-                          );
-                        },
+                      Container(
+                        transform: Matrix4.translationValues(0.0, -50.0, 0.0),
+                        child: ListView.builder(
+                          itemCount: snapshot.data['friends'].length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: FriendElement(
+                                  friend: snapshot.data['friends'][index],
+                                  refreshPage: refreshPage),
+                            );
+                          },
+                        ),
                       ),
                     ],
                   );
