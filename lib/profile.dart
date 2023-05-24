@@ -152,6 +152,7 @@ class _MainPageState extends State<MainPage> {
                           UserInfo.name[0] ?? "D",
                           style: const TextStyle(
                             fontSize: 35,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -160,7 +161,7 @@ class _MainPageState extends State<MainPage> {
                       ),
                       Text(
                         UserInfo.name ?? "default",
-                        style: const TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ],
                   ),

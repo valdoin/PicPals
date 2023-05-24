@@ -244,12 +244,12 @@ class _PostElementState extends State<PostElement> {
                         'Varela Round',
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                    margin: const EdgeInsets.only(right: 2),
                     child: Text(
                       widget.post["date"]
                           .toString()
@@ -258,7 +258,7 @@ class _PostElementState extends State<PostElement> {
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                     ),
                   ),

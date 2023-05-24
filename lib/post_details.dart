@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -8,12 +7,12 @@ import 'package:picpals/requests/comment_requests.dart';
 import 'package:picpals/requests/post_requests.dart';
 
 class PostDetailsPage extends StatefulWidget {
-  const PostDetailsPage({super.key, this.post});
+  const PostDetailsPage({Key? key, this.post}) : super(key: key);
 
   final post;
 
   @override
-  State<PostDetailsPage> createState() => _PostDetailsPageState();
+  _PostDetailsPageState createState() => _PostDetailsPageState();
 }
 
 class _PostDetailsPageState extends State<PostDetailsPage> {
@@ -33,44 +32,6 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
 
     return Scaffold(
       appBar: const MainAppBar(),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: commentFieldController,
-                focusNode: commentFocusNode,
-                decoration: const InputDecoration(
-                  hintText: 'Ajouter un commentaire...',
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-            IconButton(
-              onPressed: () async {
-                if (commentFieldController.text.isNotEmpty) {
-                  await CommentRequest.create(
-                      commentFieldController.text, widget.post);
-                  commentFieldController.clear();
-                  commentFocusNode.unfocus();
-                  setState(() {
-                    _postRes = PostRequests.getPost(widget.post);
-                  });
-                }
-              },
-              icon: const Icon(Icons.send),
-              color: Colors.blue,
-            ),
-          ],
-        ),
-      ),
       body: FutureBuilder(
         future: _postRes,
         builder: (context, snapshot) {
@@ -80,6 +41,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
             if (snapshot.data!.statusCode != 200) {
               return const Text('error');
             }
+
             return Column(
               children: [
                 Expanded(
@@ -90,48 +52,62 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                           post: _jsonRes,
                         ),
                         const SizedBox(height: 10),
-                        Builder(
-                          builder: (context) {
-                            Widget body;
-                            if (_jsonRes['comments'].length != 0) {
-                              body = ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: _jsonRes['comments'].length,
-                                itemBuilder: (context, index) {
-                                  var comment = _jsonRes['comments'][index];
-                                  return CommentElement(comment: comment);
-                                },
-                              );
-                            } else {
-                              body = Center(
-                                child: Text(
-                                  "Soyez le premier à commenter !",
-                                  style: GoogleFonts.getFont(
-                                    'Varela Round',
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              );
-                            }
-
-                            return body;
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _jsonRes['comments'].length,
+                          itemBuilder: (context, index) {
+                            var comment = _jsonRes['comments'][index];
+                            return CommentElement(comment: comment);
                           },
                         ),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 15),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: commentFieldController,
+                          focusNode: commentFocusNode,
+                          decoration: const InputDecoration(
+                            hintText: 'Ajouter un commentaire...',
+                            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          if (commentFieldController.text.isNotEmpty) {
+                            await CommentRequest.create(commentFieldController.text, widget.post);
+                            commentFieldController.clear();
+                            commentFocusNode.unfocus();
+                            setState(() {
+                              _postRes = PostRequests.getPost(widget.post);
+                            });
+                          }
+                        },
+                        icon: const Icon(Icons.send),
+                        color: Colors.blue,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             );
           } else if (snapshot.hasError) {
-            return const Text('error');
-          } else {
-            return const Center(child: CircularProgressIndicator());
+            return Text('Error: ${snapshot.error}');
           }
+          return const Center(child: CircularProgressIndicator());
         },
       ),
     );
