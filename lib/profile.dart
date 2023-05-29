@@ -363,7 +363,6 @@ class _PostElementState extends State<PostElement> {
                         style: GoogleFonts.getFont(
                           'Varela Round',
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
                           color: Colors.white,
                           fontStyle: FontStyle.italic,
                         ),
@@ -373,9 +372,8 @@ class _PostElementState extends State<PostElement> {
                   GestureDetector(
                     onTap: shareImage,
                     child: const Icon(
-                      Icons.share,
-                      color: Colors.white,
-                      size: 20,
+                      Icons.ios_share,
+                      color: Colors.white
                     ),
                   ),
                 ],

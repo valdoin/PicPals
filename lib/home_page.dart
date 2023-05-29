@@ -354,9 +354,8 @@ class _PostElementState extends State<PostElement> {
                   GestureDetector(
                     onTap: shareImage,
                     child: const Icon(
-                      Icons.share,
+                      Icons.ios_share,
                       color: Colors.white,
-                      size: 20,
                     ),
                   ),
                 ],
@@ -402,7 +401,13 @@ class _UserPostElementState extends State<UserPostElement> {
 
     final Duration difference = now.difference(date);
 
-    if (difference.inHours < 24) {
+    if (difference.inHours < 1) {
+      if (difference.inMinutes < 1) {
+        return 'Il y a ${difference.inSeconds} s';
+      } else {
+        return 'Il y a ${difference.inMinutes} min';
+      }
+    } else if (difference.inHours < 24) {
       return 'Il y a ${difference.inHours} h';
     } else {
       return 'Il y a ${difference.inDays} j';
@@ -523,7 +528,7 @@ class _UserPostElementState extends State<UserPostElement> {
                   GestureDetector(
                     onTap: shareImage,
                     child: const Icon(
-                      Icons.share,
+                      Icons.ios_share,
                       color: Colors.white,
                     ),
                   ),
