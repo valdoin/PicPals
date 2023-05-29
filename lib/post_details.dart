@@ -5,6 +5,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:picpals/main_appbar.dart';
 import 'package:picpals/requests/comment_requests.dart';
 import 'package:picpals/requests/post_requests.dart';
+import 'package:intl/intl.dart';
 
 class PostDetailsPage extends StatefulWidget {
   const PostDetailsPage({Key? key, this.post}) : super(key: key);
@@ -31,6 +32,8 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
     var _postRes = PostRequests.getPost(widget.post);
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      extendBody: true,
       appBar: const MainAppBar(),
       body: FutureBuilder(
         future: _postRes,
@@ -42,67 +45,83 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
               return const Text('error');
             }
 
-            return Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
+            return SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          PostDetailElement(
+                            post: _jsonRes,
+                          ),
+                          const SizedBox(height: 10),
+                          if (_jsonRes['comments'].length > 0)
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: _jsonRes['comments'].length,
+                              itemBuilder: (context, index) {
+                                var comment = _jsonRes['comments'][index];
+                                return CommentElement(comment: comment);
+                              },
+                            ),
+                          if (_jsonRes['comments'].length == 0)
+                            Container(
+                              margin: const EdgeInsets.only(top: 35),
+                              child: const Text(
+                                'Soyez le premier à commenter !',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
                       children: [
-                        PostDetailElement(
-                          post: _jsonRes,
+                        Expanded(
+                          child: TextField(
+                            controller: commentFieldController,
+                            focusNode: commentFocusNode,
+                            decoration: const InputDecoration(
+                              hintText: 'Ajouter un commentaire...',
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 15),
+                              border: InputBorder.none,
+                            ),
+                          ),
                         ),
-                        const SizedBox(height: 10),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _jsonRes['comments'].length,
-                          itemBuilder: (context, index) {
-                            var comment = _jsonRes['comments'][index];
-                            return CommentElement(comment: comment);
+                        IconButton(
+                          onPressed: () async {
+                            if (commentFieldController.text.isNotEmpty) {
+                              await CommentRequest.create(
+                                  commentFieldController.text, widget.post);
+                              commentFieldController.clear();
+                              commentFocusNode.unfocus();
+                              setState(() {
+                                _postRes = PostRequests.getPost(widget.post);
+                              });
+                            }
                           },
+                          icon: const Icon(Icons.send),
+                          color: Colors.blue,
                         ),
-                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: commentFieldController,
-                          focusNode: commentFocusNode,
-                          decoration: const InputDecoration(
-                            hintText: 'Ajouter un commentaire...',
-                            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () async {
-                          if (commentFieldController.text.isNotEmpty) {
-                            await CommentRequest.create(commentFieldController.text, widget.post);
-                            commentFieldController.clear();
-                            commentFocusNode.unfocus();
-                            setState(() {
-                              _postRes = PostRequests.getPost(widget.post);
-                            });
-                          }
-                        },
-                        icon: const Icon(Icons.send),
-                        color: Colors.blue,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             );
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
@@ -124,6 +143,26 @@ class CommentElement extends StatefulWidget {
 }
 
 class CommentElementState extends State<CommentElement> {
+  String formatDate(String dateString) {
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ');
+    final DateTime date = formatter.parse(dateString);
+
+    final Duration difference = now.difference(date);
+
+    if (difference.inHours < 1) {
+      if (difference.inMinutes < 1) {
+        return 'Il y a ${difference.inSeconds} s';
+      } else {
+        return 'Il y a ${difference.inMinutes} min';
+      }
+    } else if (difference.inHours < 24) {
+      return 'Il y a ${difference.inHours} h';
+    } else {
+      return 'Il y a ${difference.inDays} j';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -167,10 +206,7 @@ class CommentElementState extends State<CommentElement> {
                         Padding(
                           padding: const EdgeInsets.only(right: 8.0),
                           child: Text(
-                            widget.comment['date']
-                                .toString()
-                                .substring(0, 10)
-                                .replaceAll("-", "/"),
+                            formatDate(widget.comment['date']),
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colors.white,
@@ -209,6 +245,26 @@ class PostDetailElement extends StatefulWidget {
 }
 
 class _PostDetailElementState extends State<PostDetailElement> {
+  String formatDate(String dateString) {
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ');
+    final DateTime date = formatter.parse(dateString);
+
+    final Duration difference = now.difference(date);
+
+    if (difference.inHours < 1) {
+      if (difference.inMinutes < 1) {
+        return 'Il y a ${difference.inSeconds} s';
+      } else {
+        return 'Il y a ${difference.inMinutes} min';
+      }
+    } else if (difference.inHours < 24) {
+      return 'Il y a ${difference.inHours} h';
+    } else {
+      return 'Il y a ${difference.inDays} j';
+    }
+  }
+
   @override
   Widget build(context) {
     final _postRes = PostRequests.getPost(widget.post);
@@ -256,10 +312,7 @@ class _PostDetailElementState extends State<PostDetailElement> {
                         Container(
                           margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
                           child: Text(
-                            widget.post["date"]
-                                .toString()
-                                .substring(0, 10)
-                                .replaceAll("-", "/"),
+                            formatDate(widget.post["date"]),
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

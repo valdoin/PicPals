@@ -27,7 +27,6 @@ class _SearchFormState extends State<SearchForm> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     phoneController.dispose();
     super.dispose();
   }
@@ -45,12 +44,12 @@ class _SearchFormState extends State<SearchForm> {
             autofocus: false,
             cursorColor: HexColor(userPrimaryColor),
             dropdownTextStyle: const TextStyle(
-              color: Colors.black,
+              color: Colors.white,
               fontSize: 16,
             ),
             searchText: "Chercher un pays",
             style: const TextStyle(
-              color: Colors.black,
+              color: Colors.white,
             ),
             initialCountryCode: 'FR',
             onCountryChanged: (country) {
@@ -60,7 +59,7 @@ class _SearchFormState extends State<SearchForm> {
               counterText: '',
               labelText: 'Numéro de téléphone',
               labelStyle: const TextStyle(
-                color: Colors.black,
+                color: Colors.white,
               ),
               border: const OutlineInputBorder(),
               focusedBorder: OutlineInputBorder(
@@ -75,7 +74,7 @@ class _SearchFormState extends State<SearchForm> {
         const SizedBox(height: 10),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: HexColor(UserInfo.primaryColor),
+            backgroundColor: HexColor(UserInfo.secondaryColor),
             elevation: 0,
           ),
           onPressed: () async {

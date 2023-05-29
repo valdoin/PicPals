@@ -57,61 +57,59 @@
                         ),
                       );
                     }
-                    //le menu des amis
-                    Fluttertoast.showToast(msg: 'Friends loaded');
-                    return Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 20, 10, 0),
-                          child: Text(
-                            'Vos amis',
-                            style: GoogleFonts.getFont(
-                              'Varela Round',
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+                   
+                  //le menu des amis
+                  Fluttertoast.showToast(msg: 'Friends loaded');
+                  return Column(
+                    children: [
+                      Text(
+                        'Vos amis',
+                        style: GoogleFonts.getFont(
+                          'Varela Round',
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        ListView.builder(
+                      ),
+                      Container(
+                        transform: Matrix4.translationValues(0.0, -50.0, 0.0),
+                        child: ListView.builder(
                           itemCount: snapshot.data['friends'].length,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                               child: FriendElement(
                                   friend: snapshot.data['friends'][index],
                                   refreshPage: refreshPage),
                             );
                           },
                         ),
-                      ],
-                    );
-                  }
-                } else if (snapshot.hasError) {
-                  Fluttertoast.showToast(msg: 'Error');
-                  return const Text("erreur");
-                } else {
-                  children = <Widget>[
-                    const SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: CircularProgressIndicator(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Text(
-                        'Loading...',
-                        style: GoogleFonts.getFont(
-                          'Varela Round',
-                          color: Colors.white,
-                        ),
                       ),
-                    ),
+                    ],
+                  );
+                }
+              } else if (snapshot.hasError) {
+                Fluttertoast.showToast(msg: 'Error');
+                return const Text("erreur");
+              } else {
+                children = <Widget>[
+                  const SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: CircularProgressIndicator(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Text(
+                      'Loading...',
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        color: Colors.white,
+                      ),
+                    ),),
                   ];
                 }
                 return Center(
@@ -197,6 +195,7 @@
                           builder: (context) => ProfilePage(
                                 phone: widget.friend["phone"].toString(),
                                 name: widget.friend["name"].toString(),
+                                secondaryColor: widget.friend["secondaryColor"],
                               )));
                 } else if (result == 'Remove Friend') {
                   removeFriend();
