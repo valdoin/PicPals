@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notification_permissions/notification_permissions.dart';
+import 'package:picpals/canva.dart';
 import 'requests/account_requests.dart';
 import 'package:picpals/requests/responseHandler/account_responses_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,7 +16,7 @@ import 'user_info/manage_preferences.dart';
 
 var userPrimaryColor;
 var userSecondaryColor;
-
+bool userHasPosted = false;
 void main() {
   runApp(const MyApp());
 }
@@ -266,10 +269,13 @@ class _LoginScreenState extends State<LoginScreen> {
           List<Widget> children;
           if (snapshot.hasData) {
             if (snapshot.data == 'Connected') {
-              //menu principal
               Fluttertoast.showToast(msg: 'Connected !');
-              //return const DrawingBoard();
-              return const home.HomePage();
+
+              if (userHasPosted) {
+                return const home.HomePage();
+              } else {
+                return const DrawingBoard();
+              }
             } else {
               //menu auth
               Fluttertoast.showToast(msg: 'Could not connect');
@@ -324,7 +330,7 @@ Future<String> choosePage() async {
         UserInfo.updateInfo(loginResponse, prefs, prefs.getString('phone')!,
             prefs.getString('password')!);
       });
-
+      userHasPosted = jsonDecode(loginResponse.body)["hasposted"] ?? false;
       return 'Connected';
     } else if (loginResponse.statusCode == 400) {
       return 'Wrong credentials';

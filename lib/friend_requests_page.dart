@@ -25,101 +25,104 @@ class FriendRequestsPageState extends State<FriendRequestsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTextStyle(
-      style: Theme.of(context).textTheme.displayMedium!,
-      textAlign: TextAlign.center,
-      child: FutureBuilder<http.Response>(
-        future: _res,
-        builder: (context, snapshot) {
-          Widget receivedContent;
-          Widget sentContent;
-          if (snapshot.hasData) {
-            final jsonBody = jsonDecode(snapshot.data!.body);
-            print(jsonBody);
-            if (jsonBody['received'].length == 0) {
-              receivedContent = Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                child: Text(
-                  "Personne ne vous a envoyé de demande :'(",
-                  style: GoogleFonts.getFont(
-                    'Varela Round',
-                    fontSize: 20,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.white,
-                  ),
-                ),
-              );
-            } else {
-              receivedContent = SizedBox(
-                height: jsonBody['received'].length * 50.0,
-                child: FriendRequestsReceivedView(
-                  friends: jsonBody['received'],
-                  refreshPage: _refresh,
-                ),
-              );
-            }
-
-            if (jsonBody['sent'].length == 0) {
-              sentContent = Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                child: Text(
-                  "Vous n'avez envoyé aucune demande !",
-                  style: GoogleFonts.getFont(
-                    'Varela Round',
-                    fontSize: 20,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.white,
-                  ),
-                ),
-              );
-            } else {
-              sentContent = SizedBox(
-                height: jsonBody['sent'].length * 50.0,
-                child: FriendRequestsSentView(
-                  friends: jsonBody['sent'],
-                ),
-              );
-            }
-
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                    child: Text(
-                      "Demandes reçues : ",
-                      style: GoogleFonts.getFont(
-                        'Varela Round',
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+    return Container(
+      color: Colors.red,
+      child: DefaultTextStyle(
+        style: Theme.of(context).textTheme.displayMedium!,
+        textAlign: TextAlign.center,
+        child: FutureBuilder<http.Response>(
+          future: _res,
+          builder: (context, snapshot) {
+            Widget receivedContent;
+            Widget sentContent;
+            if (snapshot.hasData) {
+              final jsonBody = jsonDecode(snapshot.data!.body);
+              print(jsonBody);
+              if (jsonBody['received'].length == 0) {
+                receivedContent = Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  child: Text(
+                    "Personne ne vous a envoyé de demande :'(",
+                    style: GoogleFonts.getFont(
+                      'Varela Round',
+                      fontSize: 20,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.white,
                     ),
                   ),
-                  receivedContent,
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: Text(
-                      "Demandes envoyées : ",
-                      style: GoogleFonts.getFont(
-                        'Varela Round',
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                );
+              } else {
+                receivedContent = SizedBox(
+                  height: jsonBody['received'].length * 50.0,
+                  child: FriendRequestsReceivedView(
+                    friends: jsonBody['received'],
+                    refreshPage: _refresh,
+                  ),
+                );
+              }
+
+              if (jsonBody['sent'].length == 0) {
+                sentContent = Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: Text(
+                    "Vous n'avez envoyé aucune demande !",
+                    style: GoogleFonts.getFont(
+                      'Varela Round',
+                      fontSize: 20,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.white,
                     ),
                   ),
-                  sentContent,
-                ],
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return const Text('error');
-          } else {
-            return const CircularProgressIndicator();
-          }
-        },
+                );
+              } else {
+                sentContent = SizedBox(
+                  height: jsonBody['sent'].length * 60.0,
+                  child: FriendRequestsSentView(
+                    friends: jsonBody['sent'],
+                  ),
+                );
+              }
+
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: Text(
+                        "Demandes reçues : ",
+                        style: GoogleFonts.getFont(
+                          'Varela Round',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    receivedContent,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: Text(
+                        "Demandes envoyées : ",
+                        style: GoogleFonts.getFont(
+                          'Varela Round',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    sentContent,
+                  ],
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return const Text('error');
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
+        ),
       ),
     );
   }
@@ -162,6 +165,8 @@ class _FriendRequestsSentViewState extends State<FriendRequestsSentView> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: widget.friends.length,
       itemBuilder: (context, index) {
         return FriendElement(friend: widget.friends[index]);

@@ -14,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'profile.dart';
 import 'package:hexcolor/hexcolor.dart';
 
+var userHasPosted = false;
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -34,7 +36,6 @@ class HomePageState extends State<HomePage> {
   static final List<Widget> _pages = <Widget>[
     const ProfilePage(),
     const MainPage(),
-    const DrawingBoard(),
     const FriendNavigation(),
   ];
 
@@ -53,14 +54,9 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF121212), //HexColor('#FCFBF4'),
-      appBar: const MainAppBar(),
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      bottomNavigationBar: Container(
+  Container choseBottomNavBar() {
+    if (userHasPosted) {
+      return Container(
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
               topRight: Radius.circular(30), topLeft: Radius.circular(30)),
@@ -90,24 +86,77 @@ class HomePageState extends State<HomePage> {
                 label: 'Accueil',
               ),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.draw), label: 'Dessiner'),
-              BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Amis'),
+                icon: Icon(Icons.people),
+                label: 'Amis',
+              ),
             ],
             onTap: (index) {
-              if (index == 2) {
+              _onItemTapped(index);
+            },
+            currentIndex: _selectedIndex,
+          ),
+        ),
+      );
+    } else {
+      return Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+          boxShadow: [
+            BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 10),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: HexColor(userSecondaryColor),
+            selectedItemColor: Colors.white,
+            elevation: 0,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.account_circle,
+                ),
+                label: 'Profil',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Accueil',
+              ),
+              BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Amis'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.draw), label: 'Dessiner'),
+            ],
+            onTap: (index) {
+              if (index == 3) {
                 //ici rajouter condition pour voir si l'user a déjà dessiné et lui afficher erreur dans un toast le cas échéant, sinon le rediriger
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const DrawingBoard()),
                 );
-              } else {
+              } else if (index != 2) {
                 _onItemTapped(index);
               }
             },
             currentIndex: _selectedIndex,
           ),
         ),
-      ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF121212), //HexColor('#FCFBF4'),
+      appBar: const MainAppBar(),
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      bottomNavigationBar: choseBottomNavBar(),
       body: _pages.elementAt(_selectedIndex),
     );
   }
@@ -130,12 +179,35 @@ class _MainPageState extends State<MainPage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.statusCode != 200) {
-            return const Text("error while fetching user state");
+            return const Text(
+              "error while fetching user state",
+            );
           }
           if (jsonDecode(snapshot.data!.body)["hasposted"]) {
+            userHasPosted = true;
+
             return const PostsView();
           } else {
-            return const DrawingBoard();
+            userHasPosted = false;
+
+            return Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Center(
+                child: ListView(
+                  children: [
+                    Text(
+                      "you have to post before accessing this page, how did you get here ? 🤔",
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
         } else if (snapshot.hasError) {
           return const Text('error');
