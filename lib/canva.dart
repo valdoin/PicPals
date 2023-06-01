@@ -87,8 +87,8 @@ class DrawingBoardState extends State<DrawingBoard> {
   void addPoint(Offset position) {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     Offset localPosition = renderBox.globalToLocal(position);
-    double adjustY =
-        -MediaQuery.of(context).size.height *0.23; //j'ai du ajuster manuellement le tracé du widget CustomPaint, sans quoi il était décalé par rapport à la position de mon doigt
+    double adjustY = -MediaQuery.of(context).size.height *
+        0.21; //j'ai du ajuster manuellement le tracé du widget CustomPaint, sans quoi il était décalé par rapport à la position de mon doigt
     localPosition = localPosition.translate(0.0, adjustY);
     points.add(
       DrawingPoints(
@@ -114,10 +114,14 @@ class DrawingBoardState extends State<DrawingBoard> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).primaryColor,
-        title: Center(
-          child: Text(
+  automaticallyImplyLeading: false,
+  backgroundColor: Theme.of(context).primaryColor,
+  flexibleSpace: SafeArea(
+    child: Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
             "PicPals",
             style: GoogleFonts.getFont(
               'Varela Round',
@@ -126,58 +130,63 @@ class DrawingBoardState extends State<DrawingBoard> {
               color: Colors.white,
             ),
           ),
-        ),
-        actions: [
-          //bouton dans l'appbar qui permet d'envoyer le dessin une fois celui-ci fini
-          IconButton(
-            tooltip: 'Envoyer le dessin',
-            onPressed: () async {
-              final bytes = await controller.capture();
-              // ignore: use_build_context_synchronously
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Center(child: Text("Envoyer le dessin ?")),
-                  content: SizedBox(
-                    height: boardSize * 0.7,
-                    width: boardSize * 0.7,
-                    child: Image.memory(bytes!),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        PostRequests.create(bytes);
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return const hp.HomePage();
-                          },
-                        ));
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Center(child: Text('Envoyer')),
-                      ),
-                    ),
-                    TextButton(
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Center(child: Text('Annuler')),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  ],
-                ),
-              );
-            },
-            icon: const Icon(
-              Icons.send,
-              color: Colors.white,
-            ),
-          ),
         ],
       ),
+    ),
+  ),
+  actions: [
+    // bouton dans l'appbar qui permet d'envoyer le dessin une fois celui-ci fini
+    IconButton(
+      tooltip: 'Envoyer le dessin',
+      onPressed: () async {
+        final bytes = await controller.capture();
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Center(child: Text("Envoyer le dessin ?")),
+            content: SizedBox(
+              height: boardSize * 0.7,
+              width: boardSize * 0.7,
+              child: Image.memory(bytes!),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  PostRequests.create(bytes);
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return const hp.HomePage();
+                    },
+                  ));
+                },
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.0),
+                  child: Center(child: Text('Envoyer')),
+                ),
+              ),
+              TextButton(
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.0),
+                  child: Center(child: Text('Annuler')),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
+        );
+      },
+      icon: const Icon(
+        Icons.send,
+        color: Colors.white,
+      ),
+    ),
+  ],
+),
+
+
       body: Column(
         children: [
           Padding(

@@ -189,9 +189,9 @@ class _FriendElementState extends State<FriendElement> {
   Widget build(BuildContext context) {
     return Container(
       height: 50,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-        color: Colors.white,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(30)),
+        color: HexColor(widget.friend["primaryColor"]),
       ),
       child: Row(
         children: [
@@ -199,7 +199,7 @@ class _FriendElementState extends State<FriendElement> {
             width: 10,
           ),
           CircleAvatar(
-            backgroundColor: Colors.grey,
+            backgroundColor: HexColor(widget.friend["secondaryColor"]),
             child: Text('${widget.friend["name"][0]}'.toUpperCase()),
           ),
           Expanded(
@@ -237,7 +237,7 @@ class _ReceivedFriendElementState extends State<ReceivedFriendElement> {
       height: 50,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(30)),
-        color: HexColor(userSecondaryColor ?? '#FFFFFF'),
+        color: HexColor(widget.friend["primaryColor"] ?? '#FFFFFF'),
       ),
       child: Row(
         children: [
@@ -245,7 +245,7 @@ class _ReceivedFriendElementState extends State<ReceivedFriendElement> {
             width: 10,
           ),
           CircleAvatar(
-            backgroundColor: Colors.grey,
+            backgroundColor: HexColor(widget.friend["secondaryColor"]),
             child: Text('${widget.friend["name"][0]}'.toUpperCase()),
           ),
           const SizedBox(

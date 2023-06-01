@@ -1,4 +1,5 @@
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:picpals/friend_navigation.dart';
 import 'package:picpals/main.dart';
 import 'package:picpals/main_appbar.dart';
@@ -13,6 +14,8 @@ import 'package:picpals/requests/post_requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'profile.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:esys_flutter_share_plus/esys_flutter_share_plus.dart';
+import 'package:intl/intl.dart';
 
 var userHasPosted = false;
 
@@ -288,8 +291,44 @@ class PostElement extends StatefulWidget {
 }
 
 class _PostElementState extends State<PostElement> {
+  void shareImage() async {
+    try {
+      final ByteData bytes =
+          await NetworkAssetBundle(Uri.parse(widget.post["url"].toString()))
+              .load('');
+      await Share.file(
+        'Partager l\'image',
+        'image.jpg',
+        bytes.buffer.asUint8List(),
+        'image/jpeg',
+      );
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  String formatDate(String dateString) {
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ');
+    final DateTime date = formatter.parse(dateString);
+
+    final Duration difference = now.difference(date);
+
+    if (difference.inHours < 1) {
+      if (difference.inMinutes < 1) {
+        return 'Il y a ${difference.inSeconds} s';
+      } else {
+        return 'Il y a ${difference.inMinutes} min';
+      }
+    } else if (difference.inHours < 24) {
+      return 'Il y a ${difference.inHours} h';
+    } else {
+      return 'Il y a ${difference.inDays} j';
+    }
+  }
+
   @override
-  Widget build(context) {
+  Widget build(BuildContext context) {
     var postSize = MediaQuery.of(context).size.width * 0.95;
     return Container(
       margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.025,
@@ -316,21 +355,18 @@ class _PostElementState extends State<PostElement> {
                         'Varela Round',
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                    margin: const EdgeInsets.only(right: 12),
                     child: Text(
-                      widget.post["date"]
-                          .toString()
-                          .substring(0, 10)
-                          .replaceAll("-", "/"),
+                      formatDate(widget.post["date"]),
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -339,44 +375,62 @@ class _PostElementState extends State<PostElement> {
             ),
           ),
           Container(
-              //image ici
-              height: postSize * 0.97,
-              width: postSize * 0.97,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
-                  color: HexColor(widget.post["secondaryColor"].toString())),
-              child: Image.network(
-                widget.post["url"].toString(),
-                fit: BoxFit.fill,
-              )),
+            //image ici
+            height: postSize * 0.97,
+            width: postSize * 0.97,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.0),
+              color: HexColor(widget.post["secondaryColor"].toString()),
+            ),
+            child: Image.network(
+              widget.post["url"].toString(),
+              fit: BoxFit.fill,
+            ),
+          ),
           SizedBox(
             height: postSize * 0.1,
-            child: Container(
-              margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: RichText(
-                  text: TextSpan(
-                      text: "Qu'en pensez-vous ?",
-                      style: GoogleFonts.getFont(
-                        'Varela Round',
-                        fontSize: 18,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: RichText(
+                        text: TextSpan(
+                          text: "Qu'en pensez-vous ?",
+                          style: GoogleFonts.getFont(
+                            'Varela Round',
+                            fontSize: 18,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              //diriger vers la page de commentaires
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PostDetailsPage(
+                                    post: widget.post["_id"],
+                                  ),
+                                ),
+                              );
+                            },
+                        ),
                       ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          //diriger vers la page de commentaires
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PostDetailsPage(
-                                      post: widget.post["_id"],
-                                    )),
-                          );
-                        }),
-                ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: shareImage,
+                    child: const Icon(
+                      Icons.ios_share,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -396,8 +450,44 @@ class UserPostElement extends StatefulWidget {
 }
 
 class _UserPostElementState extends State<UserPostElement> {
+  void shareImage() async {
+    try {
+      final ByteData bytes =
+          await NetworkAssetBundle(Uri.parse(widget.post["url"].toString()))
+              .load('');
+      await Share.file(
+        'Partager l\'image',
+        'image.jpg',
+        bytes.buffer.asUint8List(),
+        'image/jpeg',
+      );
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  String formatDate(String dateString) {
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ');
+    final DateTime date = formatter.parse(dateString);
+
+    final Duration difference = now.difference(date);
+
+    if (difference.inHours < 1) {
+      if (difference.inMinutes < 1) {
+        return 'Il y a ${difference.inSeconds} s';
+      } else {
+        return 'Il y a ${difference.inMinutes} min';
+      }
+    } else if (difference.inHours < 24) {
+      return 'Il y a ${difference.inHours} h';
+    } else {
+      return 'Il y a ${difference.inDays} j';
+    }
+  }
+
   @override
-  Widget build(context) {
+  Widget build(BuildContext context) {
     var postSize = MediaQuery.of(context).size.width * 0.95;
     return Container(
       margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.025,
@@ -429,12 +519,9 @@ class _UserPostElementState extends State<UserPostElement> {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                    margin: const EdgeInsets.only(right: 2),
                     child: Text(
-                      widget.post["date"]
-                          .toString()
-                          .substring(0, 10)
-                          .replaceAll("-", "/"),
+                      formatDate(widget.post["date"]),
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -462,45 +549,62 @@ class _UserPostElementState extends State<UserPostElement> {
             ),
           ),
           Container(
-              //image ici
-              height: postSize * 0.97,
-              width: postSize * 0.97,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
-                  color: HexColor(widget.post["secondaryColor"].toString())),
-              child: Image.network(
-                widget.post["url"].toString(),
-                fit: BoxFit.fill,
-              )),
+            //image ici
+            height: postSize * 0.97,
+            width: postSize * 0.97,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.0),
+              color: HexColor(widget.post["secondaryColor"].toString()),
+            ),
+            child: Image.network(
+              widget.post["url"].toString(),
+              fit: BoxFit.fill,
+            ),
+          ),
           SizedBox(
             height: postSize * 0.1,
-            child: Container(
-              margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: RichText(
-                  text: TextSpan(
-                      text: "Qu'en pensez-vous ?",
-                      style: GoogleFonts.getFont(
-                        'Varela Round',
-                        fontSize: 18,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: RichText(
+                        text: TextSpan(
+                          text: "Qu'en pensez-vous ?",
+                          style: GoogleFonts.getFont(
+                            'Varela Round',
+                            fontSize: 18,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              //diriger vers la page de commentaires
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PostDetailsPage(
+                                    post: widget.post["_id"],
+                                  ),
+                                ),
+                              );
+                            },
+                        ),
                       ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          //diriger vers la page de commentaires
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PostDetailsPage(
-                                      post: widget.post["_id"],
-                                    )),
-                          );
-                        }),
-                ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: shareImage,
+                    child: const Icon(
+                      Icons.ios_share,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

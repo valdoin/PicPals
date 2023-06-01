@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -11,11 +11,18 @@ import 'package:picpals/requests/post_requests.dart';
 import 'package:http/http.dart' as http;
 import 'package:picpals/main_appbar.dart';
 import 'package:picpals/post_details.dart';
+import 'package:esys_flutter_share_plus/esys_flutter_share_plus.dart';
+import 'package:intl/intl.dart';
 
 class ProfilePage extends StatefulWidget {
   final String phone;
   final String name;
-  const ProfilePage({super.key, required this.phone, required this.name});
+  final String secondaryColor;
+  const ProfilePage(
+      {super.key,
+      required this.phone,
+      required this.name,
+      required this.secondaryColor});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -26,68 +33,17 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MainAppBar(),
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       body: Center(
         child: Column(
           children: [
-            Expanded(child: MainPage(phone: widget.phone, name: widget.name)),
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Confirmation"),
-                            content: const Text(
-                                "Êtes-vous sûr de vouloir supprimer cet ami ?"),
-                            actions: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("Annuler"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      FriendRequests.deleteFriend(widget.phone);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const FriendPage()));
-                                      Fluttertoast.showToast(
-                                        msg: "Friend deleted",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        backgroundColor: Colors.grey[700],
-                                        textColor: Colors.white,
-                                      );
-                                    },
-                                    style: ButtonStyle(
-                                      foregroundColor: MaterialStateProperty
-                                          .all<Color>(Colors
-                                              .red), // Couleur du texte en rouge
-                                    ),
-                                    child: const Text("Supprimer"),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: const Text("Supprimer l'ami"),
-                  ),
-                ],
-              ),
-            ),
+            Expanded(
+                child: MainPage(
+              phone: widget.phone,
+              name: widget.name,
+              secondaryColor: widget.secondaryColor,
+            )),
           ],
         ),
       ),
@@ -98,7 +54,13 @@ class _ProfilePageState extends State<ProfilePage> {
 class MainPage extends StatefulWidget {
   late String phone;
   late String name;
-  MainPage({super.key, required this.phone, required this.name, this.posts});
+  late String secondaryColor;
+  MainPage(
+      {super.key,
+      required this.phone,
+      required this.name,
+      required this.secondaryColor,
+      this.posts});
 
   final posts;
   @override
@@ -121,7 +83,7 @@ class _MainPageState extends State<MainPage> {
 
     return RefreshIndicator(
       onRefresh: _refresh,
-      color: HexColor(userSecondaryColor) ?? Colors.black,
+      color: HexColor(widget.secondaryColor) ?? Colors.black,
       child: FutureBuilder<http.Response>(
         future: userPostsRes,
         builder: (context, snapshot) {
@@ -136,13 +98,110 @@ class _MainPageState extends State<MainPage> {
               itemCount: res.length + 1,
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  //affichage de l'en-tête avec avatar et pseudo
+                  // Affichage de l'en-tête avec avatar et pseudo
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                     child: Column(
-                      //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Container(
+                          alignment: Alignment.topRight,
+                          padding: const EdgeInsets.only(right: 10),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.settings,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Options"),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      "Confirmation"),
+                                                  content: const Text(
+                                                      "Êtes-vous sûr de vouloir supprimer cet ami ?"),
+                                                  actions: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          child: const Text(
+                                                              "Annuler"),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            FriendRequests
+                                                                .deleteFriend(
+                                                                    widget
+                                                                        .phone);
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            const FriendPage()));
+                                                            Fluttertoast
+                                                                .showToast(
+                                                              msg:
+                                                                  "Friend deleted",
+                                                              toastLength: Toast
+                                                                  .LENGTH_SHORT,
+                                                              gravity:
+                                                                  ToastGravity
+                                                                      .BOTTOM,
+                                                              backgroundColor:
+                                                                  Colors.grey[
+                                                                      700],
+                                                              textColor:
+                                                                  Colors.white,
+                                                            );
+                                                          },
+                                                          style: ButtonStyle(
+                                                            foregroundColor:
+                                                                MaterialStateProperty
+                                                                    .all<Color>(
+                                                                        Colors
+                                                                            .red), // Couleur du texte en rouge
+                                                          ),
+                                                          child: const Text(
+                                                              "Supprimer"),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: const Text("Supprimer l'ami"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
                         CircleAvatar(
+                          backgroundColor: HexColor(widget.secondaryColor),
                           radius: 35,
                           child: Text(
                             widget.name[0],
@@ -163,7 +222,7 @@ class _MainPageState extends State<MainPage> {
                   );
                 }
 
-                //affichage des posts
+                // Affichage des posts
                 var post = res[index - 1];
                 return PostElement(post: post);
               },
@@ -191,6 +250,42 @@ class PostElement extends StatefulWidget {
 }
 
 class _PostElementState extends State<PostElement> {
+  void shareImage() async {
+    try {
+      final ByteData bytes =
+          await NetworkAssetBundle(Uri.parse(widget.post["url"].toString()))
+              .load('');
+      await Share.file(
+        'Partager l\'image',
+        'image.jpg',
+        bytes.buffer.asUint8List(),
+        'image/jpeg',
+      );
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  String formatDate(String dateString) {
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ');
+    final DateTime date = formatter.parse(dateString);
+
+    final Duration difference = now.difference(date);
+
+    if (difference.inHours < 1) {
+      if (difference.inMinutes < 1) {
+        return 'Il y a ${difference.inSeconds} s';
+      } else {
+        return 'Il y a ${difference.inMinutes} min';
+      }
+    } else if (difference.inHours < 24) {
+      return 'Il y a ${difference.inHours} h';
+    } else {
+      return 'Il y a ${difference.inDays} j';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var postSize = MediaQuery.of(context).size.width * 0.95;
@@ -230,10 +325,7 @@ class _PostElementState extends State<PostElement> {
                   Container(
                     margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
                     child: Text(
-                      widget.post["date"]
-                          .toString()
-                          .substring(0, 10)
-                          .replaceAll("-", "/"),
+                      formatDate(widget.post["date"]),
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -250,7 +342,8 @@ class _PostElementState extends State<PostElement> {
             width: postSize * 0.97,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15.0),
-              color: HexColor(widget.post["secondaryColor"].toString()) ?? Colors.black,
+              color: HexColor(widget.post["secondaryColor"].toString()) ??
+                  Colors.black,
             ),
             child: Image.network(
               widget.post["url"].toString(),
@@ -260,30 +353,39 @@ class _PostElementState extends State<PostElement> {
           SizedBox(
             height: postSize * 0.1,
             child: Container(
-              margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PostDetailsPage(
-                              post: widget.post,
-                            )),
-                  );
-                },
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Voir les détails",
-                    style: GoogleFonts.getFont(
-                      'Varela Round',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontStyle: FontStyle.italic,
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PostDetailsPage(
+                            post: widget.post,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Voir les détails",
+                      style: GoogleFonts.getFont(
+                        'Varela Round',
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ),
-                ),
+                  GestureDetector(
+                    onTap: shareImage,
+                    child: const Icon(
+                      Icons.ios_share,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

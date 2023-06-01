@@ -1,6 +1,7 @@
 import 'dart:convert';
-
+import 'package:esys_flutter_share_plus/esys_flutter_share_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -10,6 +11,7 @@ import 'package:picpals/user_info/manage_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:picpals/requests/account_requests.dart';
 import 'package:picpals/post_details.dart';
+import 'package:intl/intl.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -21,87 +23,12 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: Center(
         child: Column(
           children: [
-            const Expanded(child: MainPage()),
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      UserInfo.resetInfo();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomePage(
-                                    title: 'Picpals',
-                                  )));
-                    },
-                    child: const Text('Déconnexion'),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Confirmation"),
-                            content: const Text(
-                                "Êtes-vous sûr de vouloir supprimer votre compte ?"),
-                            actions: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("Annuler"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      AccountRequest.delete();
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const HomePage(
-                                                    title: 'Picpals',
-                                                  )));
-                                      Fluttertoast.showToast(
-                                        msg: "Account deleted",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        backgroundColor: Colors.grey[700],
-                                        textColor: Colors.white,
-                                      );
-                                    },
-                                    style: ButtonStyle(
-                                      foregroundColor: MaterialStateProperty
-                                          .all<Color>(Colors
-                                              .red), // Couleur du texte en rouge
-                                    ),
-                                    child: const Text("Supprimer"),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: const Text("Supprimer le compte"),
-                  ),
-                ],
-              ),
-            ),
+            Expanded(child: MainPage()),
           ],
         ),
       ),
@@ -139,12 +66,132 @@ class _MainPageState extends State<MainPage> {
             itemCount: res.length + 1,
             itemBuilder: (context, index) {
               if (index == 0) {
-                //affichage de l'en-tête avec avatar et pseudo
+                // Affichage de l'en-tête avec avatar et pseudo
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                   child: Column(
-                    //mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Container(
+                        alignment: Alignment.topRight,
+                        padding: const EdgeInsets.only(right: 10),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.settings,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Options"),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          // Déconnexion
+                                          UserInfo.resetInfo();
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const HomePage(
+                                                title: 'Picpals',
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: const Text('Déconnexion'),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          // Suppression du compte
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title:
+                                                    const Text("Confirmation"),
+                                                content: const Text(
+                                                    "Êtes-vous sûr de vouloir supprimer votre compte ?"),
+                                                actions: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: const Text(
+                                                            "Annuler"),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          AccountRequest
+                                                              .delete();
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          const HomePage(
+                                                                            title:
+                                                                                'Picpals',
+                                                                          )));
+                                                          Fluttertoast
+                                                              .showToast(
+                                                            msg:
+                                                                "Account deleted",
+                                                            toastLength: Toast
+                                                                .LENGTH_SHORT,
+                                                            gravity:
+                                                                ToastGravity
+                                                                    .BOTTOM,
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .grey[700],
+                                                            textColor:
+                                                                Colors.white,
+                                                          );
+                                                        },
+                                                        style: ButtonStyle(
+                                                          foregroundColor:
+                                                              MaterialStateProperty
+                                                                  .all<Color>(
+                                                                      Colors
+                                                                          .red),
+                                                          // Couleur du texte en rouge
+                                                        ),
+                                                        child: const Text(
+                                                            "Supprimer"),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child:
+                                            const Text("Supprimer le compte"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
                       CircleAvatar(
                         backgroundColor: HexColor(userSecondaryColor),
                         radius: 35,
@@ -152,23 +199,21 @@ class _MainPageState extends State<MainPage> {
                           UserInfo.name[0] ?? "D",
                           style: const TextStyle(
                             fontSize: 35,
+                            color: Colors.white,
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
+                      const SizedBox(height: 5),
                       Text(
                         UserInfo.name ?? "default",
-                        style: const TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ],
                   ),
                 );
               }
 
-              //affichage des posts
-
+              // Affichage des posts
               return PostElement(post: res[index - 1]);
             },
           );
@@ -195,6 +240,42 @@ class PostElement extends StatefulWidget {
 }
 
 class _PostElementState extends State<PostElement> {
+  void shareImage() async {
+    try {
+      final ByteData bytes =
+          await NetworkAssetBundle(Uri.parse(widget.post["url"].toString()))
+              .load('');
+      await Share.file(
+        'Partager l\'image',
+        'image.jpg',
+        bytes.buffer.asUint8List(),
+        'image/jpeg',
+      );
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  String formatDate(String dateString) {
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ');
+    final DateTime date = formatter.parse(dateString);
+
+    final Duration difference = now.difference(date);
+
+    if (difference.inHours < 1) {
+      if (difference.inMinutes < 1) {
+        return 'Il y a ${difference.inSeconds} s';
+      } else {
+        return 'Il y a ${difference.inMinutes} min';
+      }
+    } else if (difference.inHours < 24) {
+      return 'Il y a ${difference.inHours} h';
+    } else {
+      return 'Il y a ${difference.inDays} j';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var postSize = MediaQuery.of(context).size.width * 0.95;
@@ -234,10 +315,7 @@ class _PostElementState extends State<PostElement> {
                   Container(
                     margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
                     child: Text(
-                      widget.post["date"]
-                          .toString()
-                          .substring(0, 10)
-                          .replaceAll("-", "/"),
+                      formatDate(widget.post["date"]),
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -263,31 +341,42 @@ class _PostElementState extends State<PostElement> {
           ),
           SizedBox(
             height: postSize * 0.1,
-            child: Container(
-              margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PostDetailsPage(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PostDetailsPage(
                               post: widget.post,
-                            )),
-                  );
-                },
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Voir les détails",
-                    style: GoogleFonts.getFont(
-                      'Varela Round',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "Voir les détails",
+                        style: GoogleFonts.getFont(
+                          'Varela Round',
+                          fontSize: 18,
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  GestureDetector(
+                    onTap: shareImage,
+                    child: const Icon(
+                      Icons.ios_share,
+                      color: Colors.white
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
