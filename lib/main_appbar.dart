@@ -50,3 +50,23 @@ class _MainAppBarState extends State<MainAppBar> {
     );
   }
 }
+
+class FriendMainAppBar extends MainAppBar {
+  Widget build(BuildContext context) {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: Colors.black,
+      title: Center(
+        child: Text(
+          "PicPals",
+          style: GoogleFonts.getFont(
+            'Varela Round',
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+}

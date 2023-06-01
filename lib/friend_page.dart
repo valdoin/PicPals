@@ -72,7 +72,7 @@
                         ),
                       ),
                       Container(
-                        transform: Matrix4.translationValues(0.0, -50.0, 0.0),
+                        transform: Matrix4.translationValues(0.0, -65.0, 0.0),
                         child: ListView.builder(
                           itemCount: snapshot.data['friends'].length,
                           shrinkWrap: true,

@@ -140,12 +140,16 @@ class _FriendRequestsReceivedViewState
     extends State<FriendRequestsReceivedView> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.friends.length,
-      itemBuilder: (context, index) {
-        return ReceivedFriendElement(
-            friend: widget.friends[index], refreshPage: widget.refreshPage);
-      },
+    return Container(
+      transform: Matrix4.translationValues(0.0, -25.0, 0.0),
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: widget.friends.length,
+        itemBuilder: (context, index) {
+          return ReceivedFriendElement(
+              friend: widget.friends[index], refreshPage: widget.refreshPage);
+        },
+      ),
     );
   }
 }
@@ -161,11 +165,14 @@ class FriendRequestsSentView extends StatefulWidget {
 class _FriendRequestsSentViewState extends State<FriendRequestsSentView> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.friends.length,
-      itemBuilder: (context, index) {
-        return FriendElement(friend: widget.friends[index]);
-      },
+    return Container(
+      transform: Matrix4.translationValues(0.0, 20.0, 0.0),
+      child: ListView.builder(
+        itemCount: widget.friends.length,
+        itemBuilder: (context, index) {
+          return FriendElement(friend: widget.friends[index]);
+        },
+      ),
     );
   }
 }

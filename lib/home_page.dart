@@ -38,7 +38,7 @@ class HomePageState extends State<HomePage> {
     const ProfilePage(),
     const MainPage(),
     const DrawingBoard(),
-    const FriendNavigation(),
+    const FriendNavigation(), 
   ];
 
   var userPrimaryColor = "#0d1b2a";

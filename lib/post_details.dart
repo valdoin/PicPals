@@ -277,70 +277,82 @@ class _PostDetailElementState extends State<PostDetailElement> {
           if (snapshot.data!.statusCode != 200) {
             return const Text('error');
           }
-          return Container(
-            margin: EdgeInsets.fromLTRB(
-                MediaQuery.of(context).size.width * 0.025,
-                postSize * 0.1,
-                MediaQuery.of(context).size.width * 0.025,
-                6),
-            width: postSize,
-            height: postSize * 1.22,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(30)),
-              color: HexColor(widget.post["primaryColor"].toString()),
-            ),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: postSize * 0.15,
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            widget.post["author"]["name"].toString(),
-                            style: GoogleFonts.getFont(
-                              'Varela Round',
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+          return Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                alignment: Alignment.center,
+                child: Text(widget.post["phrase"]["phrase"].toString(),
+                style: const TextStyle(fontSize: 18,
+                fontStyle: FontStyle.italic,
+                color: Colors.white,),)
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(
+                    MediaQuery.of(context).size.width * 0.025,
+                    16,
+                    MediaQuery.of(context).size.width * 0.025,
+                    6),
+                width: postSize,
+                height: postSize * 1.22,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(30)),
+                  color: HexColor(widget.post["primaryColor"].toString()),
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: postSize * 0.15,
+                      child: Container(
+                        margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                widget.post["author"]["name"].toString(),
+                                style: GoogleFonts.getFont(
+                                  'Varela Round',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
-                          child: Text(
-                            formatDate(widget.post["date"]),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                              child: Text(
+                                formatDate(widget.post["date"]),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    Container(
+                        //image ici
+                        height: postSize * 0.97,
+                        width: postSize * 0.97,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15.0),
+                            color:
+                                HexColor(widget.post["secondaryColor"].toString())),
+                        child: Image.network(
+                          widget.post["url"].toString(),
+                          fit: BoxFit.fill,
+                        )),
+                    SizedBox(
+                      height: postSize * 0.1,
+                    ),
+                  ],
                 ),
-                Container(
-                    //image ici
-                    height: postSize * 0.97,
-                    width: postSize * 0.97,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        color:
-                            HexColor(widget.post["secondaryColor"].toString())),
-                    child: Image.network(
-                      widget.post["url"].toString(),
-                      fit: BoxFit.fill,
-                    )),
-                SizedBox(
-                  height: postSize * 0.1,
-                ),
-              ],
-            ),
+              ),
+            ],
           );
         } else if (snapshot.hasError) {
           return const Text('error');
