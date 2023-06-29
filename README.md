@@ -11,6 +11,6 @@ Indeed, the application users are notified once a day about the appearance of a 
 To enhance the playful aspect of the social network, the phrase is the same for all users, and they cannot see their friends' drawings until they have drawn their own.  
 
 For API management, the application uses an Express server communicating with a MongoDB database.   
-As for UI, this project uses Flutter, the powerful Google Framework which facilitates multi-platform development.  
+As for UI, this project uses Flutter, the powerful Google Framework which facilitates cross-platform development.  
 
 🚧 This project is still in progress. 🚧
